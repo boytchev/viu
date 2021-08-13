@@ -3,7 +3,8 @@
 <html>
 	<head>
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<script src="three.min.js"></script>
+		<script src="js/three.min.js"></script>
+		<script src="js/OrbitControls.js"></script>
 		<link rel="stylesheet" href="css/viu.css">
 	</head>
 	
@@ -14,28 +15,49 @@
 			var renderer = new THREE.WebGLRenderer( {antialias:true} );
 				renderer.setAnimationLoop( animate );
 				renderer.shadowMap.enabled = true;
-				renderer.shadowMap.type = THREE.VSMShadowMap; 
+				renderer.shadowMap.type = THREE.PCFSoftShadowMap; 
 				document.body.appendChild( renderer.domElement );
 
 			var scene = new THREE.Scene();
-				scene.background = new THREE.Color( 'white' );
+				scene.background = new THREE.Color( 'black' );
 
 			var camera = new THREE.PerspectiveCamera( 60, 1, 1, 1000 );
-				camera.position.set( 0, 40, 100 );
+				camera.position.set( 40, 80, 40 );
 				camera.lookAt( scene.position );
 			
-			var light = new THREE.PointLight( 'white', 0.5 );
-				light.position.set( 0, 45, 90 );
+			var light = new THREE.SpotLight( 'white', 0.5 );
+				light.position.set( 70*2, 45*2, 70*2 );
+				light.target = scene;
+				light.angle = Math.PI/3/4;
+				light.penumbra = 1;
 				light.castShadow = true;
-				light.shadow.mapSize.width = 8*128; // default
-light.shadow.mapSize.height = 8*128; // default
-light.shadow.camera.near = 10; // default
-light.shadow.camera.far = 1000; // default
-light.shadow.bias = -0.0005; // default
+				light.shadow.mapSize.width = 1024/4; 
+				light.shadow.mapSize.height = 1024/4; 
+				light.shadow.camera.near = 20; 
+				light.shadow.camera.far = 500; 
+				light.shadow.camera.left = -200; 
+				light.shadow.camera.right = 200; 
+				light.shadow.camera.top = -100; 
+				light.shadow.camera.bottom = 100; 
+				light.shadow.bias = -0.001; 
+				light.shadow.radius = 10;
 
 				scene.add( light );
-				scene.add( new THREE.AmbientLight( 'white', 0.5 ) );
+				scene.add( new THREE.AmbientLight( 'white', 0.3 ) );
 
+			var controls = new THREE.OrbitControls( camera, renderer.domElement );
+				controls.maxPolarAngle = Math.PI * 0.495;
+				controls.minDistance = 2;
+				controls.maxDistance = 100;
+				controls.enableDamping = true;
+				controls.dampingFactor = 0.25;
+				controls.rotateSpeed = 0.3;
+				controls.panSpeed = 0.7;
+				controls.screenSpacePanning = false;
+				controls.target.set( 0, 0, 0 );
+				controls.update();
+	
+	
 			// manage rezie
 			
 			window.addEventListener( 'resize', onWindowResize, false );
@@ -57,8 +79,8 @@ light.shadow.bias = -0.0005; // default
 			function animate( time )
 			{
 				// slow rotation of the cube
-				scene.rotation.set( 0, time/2000, 0 );
-				
+				//scene.rotation.set( 0, time/2000, 0 );
+				controls.update();
 				renderer.render( scene, camera );
 			}
 			
@@ -68,107 +90,314 @@ light.shadow.bias = -0.0005; // default
 
 			// triangle sides
 			
-			const A = 30;
-			const B = 40;
-			const C = Math.sqrt(A*A+B*B);
+			A = 20;
+			B = 40;
+			C = Math.sqrt(A*A+B*B);
+			K = 3;
+			
+			console.assert( A <= B );
 
 			// other parameters
 			
 			const FRAME_WIDTH = 5;
-			const BASE_HEIGHT = 3;
-			const FRAME_RADIUS = 4;
+			const FRAME_RADIUS = 5;
+			const INNER_RADIUS = 2;
+			const FRAME_HEIGHT = 4;
+			const FRAME_BASE = 1;
+			const FRAME_GROOVE = 2;
 			const FRAME_SIZE = A+B+2*FRAME_WIDTH;
+			const TILE_HEIGHT = 1;
 			
-			mainFrame.rotation.x = -Math.PI/2;
-			mainFrame.position.set( -FRAME_SIZE/2, 0, FRAME_SIZE/2 );
-			// materials
 			
-			//https://www.wildtextures.com/free-textures/just-a-simple-seamless-concrete-texture/
-			texture = new THREE.TextureLoader().load( 'wildtextures-seamless-industrial-concrete-texture.jpg' );
-			texture.wrapS = THREE.RepeatWrapping;
-texture.wrapT = THREE.RepeatWrapping;
-texture.repeat.set( 1/64, 1/64 );
-
-//scene.background = texture;
-
-			var mainMaterial = new THREE.MeshStandardMaterial( {
-										color: 'white',
-										emissive: 'tan',
-										emissiveIntensity: 0.1,
-										map: texture,
-										//envMap: texture2,
-    roughness: 0.6,
-    metalness: 0.1,
-										side: THREE.DoubleSide,
-									} );
-
-			// base of the model
-
-			var S = FRAME_SIZE,
-				G = FRAME_RADIUS;
-			
-			var shape = new THREE.Shape();
-				shape.moveTo( 0, S/2 );
-				shape.lineTo( 0, S-G );
-				shape.quadraticCurveTo( 0, S, G, S );
-				shape.lineTo( S-G, S );
-				shape.quadraticCurveTo( S, S, S, S-G );
-				shape.lineTo( S, G );
-				shape.quadraticCurveTo( S, 0, S-G, 0 );
-				shape.lineTo( G, 0 );
-				shape.quadraticCurveTo( 0, 0, 0, G );
-				shape.lineTo( 0, S/2 );
-
-			var extrudeSettings = {
-				steps: 1,
-				depth: BASE_HEIGHT,
-				bevelEnabled: false,
-				//bevelThickness: 1,
-				//bevelSize: 1,
-				//bevelOffset: 0,
-				//bevelSegments: 8
-			};
-
-			var geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
-			var base = new THREE.Mesh( geometry, mainMaterial );
-				mainFrame.add( base );
-				base.castShadow = true;
-				base.receiveShadow = true;
-
-			// frame of the model
-
-			var F = FRAME_WIDTH;
-
-			var hole = new THREE.Path();
-				hole.moveTo( 0+F, S/2 );
-				hole.lineTo( 0+F, S-G-F );
-				hole.quadraticCurveTo( 0+F, S-F, G+F, S-F );
-				hole.lineTo( S-G-F, S-F );
-				hole.quadraticCurveTo( S-F, S-F, S-F, S-G-F );
-				hole.lineTo( S-F, G+F );
-				hole.quadraticCurveTo( S-F, 0+F, S-G-F, 0+F );
-				hole.lineTo( G+F, 0+F );
-				hole.quadraticCurveTo( 0+F, 0+F, 0+F, G+F );
-				hole.lineTo( 0+F, S/2 );
+			// the dark blue cloth
+			function createFloor( )
+			{
+				const size = FRAME_SIZE*3;
 				
+				var texture = new THREE.TextureLoader().load( 'textures/fabric.jpg' );
+					texture.wrapS = THREE.RepeatWrapping;
+					texture.wrapT = THREE.RepeatWrapping;
+					texture.repeat.set( 2, 2 );
+					texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
+				var geometry = new THREE.PlaneGeometry( size, size );
+				
+				var material = new THREE.MeshStandardMaterial( {
+						color: 'dimgray',
+						roughness: 1,
+						metalness: 0,
+						emissive: 'cornflowerblue',
+						emissiveIntensity: 0.1,
+						map: texture,
+						bumpMap: texture } );
+						
+				var mesh = new THREE.Mesh( geometry, material );
+					mesh.receiveShadow = true;
+					mesh.rotation.x = -Math.PI/2;
+					
+				scene.add( mesh );
+			}
+
+			createFloor(  );
+			
+
+			var frameTexture = new THREE.TextureLoader().load( 'textures/concrete.jpg' );
+				frameTexture.wrapS = THREE.RepeatWrapping;
+				frameTexture.wrapT = THREE.RepeatWrapping;
+				frameTexture.repeat.set( 1/FRAME_SIZE, 1/FRAME_SIZE );
+				frameTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
+
+			function createEdge(  )
+			{
+				const
+					size = FRAME_SIZE,
+					width = FRAME_WIDTH,
+					height = FRAME_HEIGHT,
+					radius = FRAME_RADIUS,
+					inner_radius = INNER_RADIUS;
+				
+				var shape = new THREE.Shape();
+					shape.moveTo( 0, size/2 );
+					shape.lineTo( 0, size-radius );
+					shape.quadraticCurveTo( 0, size, radius, size );
+					shape.lineTo( size-radius, size );
+					shape.quadraticCurveTo( size, size, size, size-radius );
+					shape.lineTo( size, radius );
+					shape.quadraticCurveTo( size, 0, size-radius, 0 );
+					shape.lineTo( radius, 0 );
+					shape.quadraticCurveTo( 0, 0, 0, radius );
+					shape.lineTo( 0, size/2 );
+					
+				var hole = new THREE.Path();
+					hole.moveTo( width, size/2 );
+					hole.lineTo( width, size-inner_radius-width );
+					hole.quadraticCurveTo( width, size-width, inner_radius+width, size-width );
+					hole.lineTo( size-inner_radius-width, size-width );
+					hole.quadraticCurveTo( size-width, size-width, size-width, size-inner_radius-width );
+					hole.lineTo( size-width, inner_radius+width );
+					hole.quadraticCurveTo( size-width, width, size-inner_radius-width, width );
+					hole.lineTo( inner_radius+width, width );
+					hole.quadraticCurveTo( width, width, width, inner_radius+width );
+					hole.lineTo( width, size/2 );
+					
 				shape.holes = [hole];
+				
+				var geometry = new THREE.ExtrudeGeometry( shape, {
+						steps: 1,
+						depth: height,
+						bevelEnabled: false });
+						
+				var material = new THREE.MeshStandardMaterial( {
+						roughness: 0.6,
+						metalness: 0.2,
+						emissive: 'orange',
+						emissiveIntensity: 0.3,
+						map: frameTexture,
+						bumpMap: frameTexture,
+						bumpScale: -0.25,
+						side: THREE.DoubleSide } );
+						
+				var mesh = new THREE.Mesh( geometry, material );
+					mesh.rotation.x = -Math.PI/2;
+					mesh.position.set( -size/2, 0, size/2 );
+					mesh.castShadow = true;
+					mesh.receiveShadow = true;
+					
+				scene.add( mesh );
+			}
+			
+			createEdge( );
+			
+			
+			function createBase( )
+			{
+				const
+					size = FRAME_SIZE,
+					height = FRAME_BASE,
+					radius  = FRAME_RADIUS;
+					
+				var shape = new THREE.Shape();
+					shape.moveTo( radius, radius );
+					shape.lineTo( radius, size-radius );
+					shape.lineTo( size-radius, size-radius );
+					shape.lineTo( size-radius, radius );
+					
+				var geometry = new THREE.ExtrudeGeometry( shape, {
+						steps: 1,
+						depth: 0.01,
+						bevelEnabled: false });
+						
+				var material = new THREE.MeshStandardMaterial( {
+						color: 'gray',
+						roughness: 0.6,
+						metalness: 0.2,
+						emissive: 'orange',
+						emissiveIntensity: 0.3,
+						map: frameTexture,
+						bumpMap: frameTexture,
+						bumpScale: -0.25,
+						side: THREE.DoubleSide } );
+						
+				var mesh = new THREE.Mesh( geometry, material );
+					mesh.rotation.x = -Math.PI/2;
+					mesh.position.set( -size/2, height, size/2 );
+					mesh.receiveShadow = true;
+					
+				scene.add( mesh );
+			}
+			
+			createBase( );
 
-			var extrudeSettings = {
-				steps: 1,
-				depth: 2*BASE_HEIGHT,
-				bevelEnabled: false,
-				//bevelThickness: 1,
-				//bevelSize: 1,
-				//bevelOffset: 0,
-				//bevelSegments: 8
-			};
 
-			geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
-			var frame = new THREE.Mesh( geometry, mainMaterial );
-				mainFrame.add( frame );
-			frame.position.z = BASE_HEIGHT;
-				frame.castShadow = true;
-				frame.receiveShadow = true;
+			function createGrooveEdge(  )
+			{
+				const
+					M = FRAME_WIDTH,
+					N = FRAME_WIDTH+A/K-INNER_RADIUS,
+					S = FRAME_SIZE,
+					H = FRAME_GROOVE,
+					R = INNER_RADIUS;
+				
+				var shape = new THREE.Shape();
+					shape.moveTo( M, M );
+					shape.lineTo( M, S-M );
+					shape.lineTo( S-M, S-M );
+					shape.lineTo( S-M, M );
+					
+				var hole = new THREE.Path();
+					hole.moveTo( N, S/2 );
+					hole.lineTo( N, S-N-R );
+					hole.quadraticCurveTo( N, S-N, N+R, S-N );
+					hole.lineTo( S-N-R, S-N );
+					hole.quadraticCurveTo( S-N, S-N, S-N, S-N-R );
+					hole.lineTo( S-N, N+R );
+					hole.quadraticCurveTo( S-N, N, S-N-R, N );
+					hole.lineTo( N+R, N );
+					hole.quadraticCurveTo( N, N, N, N+R );
+					hole.lineTo( N, S/2 );
+					
+				shape.holes = [hole];
+				
+				var geometry = new THREE.ExtrudeGeometry( shape, {
+						steps: 1,
+						depth: H,
+						bevelEnabled: false });
+						
+				var material = new THREE.MeshStandardMaterial( {
+						roughness: 0.6,
+						metalness: 0.2,
+						emissive: 'orange',
+						emissiveIntensity: 0.3,
+						map: frameTexture,
+						bumpMap: frameTexture,
+						bumpScale: -0.25,
+						side: THREE.DoubleSide } );
+						
+				var mesh = new THREE.Mesh( geometry, material );
+					mesh.rotation.x = -Math.PI/2;
+					mesh.position.set( -S/2, 0, S/2 );
+					mesh.castShadow = true;
+					mesh.receiveShadow = true;
+					
+				scene.add( mesh );
+			}
+			
+			createGrooveEdge( );
+
+
+			function newTile( )
+			{
+				const
+					R = INNER_RADIUS,
+					H = TILE_HEIGHT,
+					U = FRAME_GROOVE-FRAME_BASE;
+			
+				var shape = new THREE.Shape();
+					shape.moveTo( A/2, 0 );
+					shape.lineTo( R, 0 );
+					shape.quadraticCurveTo( 0, 0, 0, R );
+					shape.lineTo( 0, B-R );
+					shape.quadraticCurveTo( 0, B, R/B*A, B-R );
+					shape.lineTo( A, 0 );
+				
+				var geometry = new THREE.ExtrudeGeometry( shape, {
+						steps: 1,
+						depth: H,
+						bevelEnabled: false });
+						
+				var material = new THREE.MeshStandardMaterial( {
+						roughness: 0.3,
+						metalness: 0.8,
+						emissive: 'white',
+						emissiveIntensity: 0.5,
+						map: frameTexture,
+						bumpMap: frameTexture,
+						bumpScale: 0.15,
+						//wireframe: true,
+						transparent: true,
+						opacity: 0.8,
+						//side: THREE.DoubleSide
+						} );
+						
+				var plateMesh = new THREE.Mesh( geometry, material );
+					plateMesh.rotation.x = -Math.PI/2;
+					plateMesh.position.set( -A/K, 0, A/K );
+					plateMesh.castShadow = true;
+					plateMesh.receiveShadow = true;
+				
+				var shape = new THREE.Shape();
+					shape.moveTo( 0, 0 );
+					shape.absarc( 0, 0, R, 0, 2*Math.PI );
+				
+				var geometry = new THREE.ExtrudeGeometry( shape, {
+						steps: 1,
+						depth: 2*U+H,
+						bevelEnabled: false });
+				
+				var material = new THREE.MeshStandardMaterial( {
+						roughness: 0.3,
+						metalness: 0,
+						emissive: 'gray',
+						emissiveIntensity: 0.2,
+						map: frameTexture,
+						bumpMap: frameTexture,
+						bumpScale: 0.15,
+						//wireframe: true,
+						//side: THREE.DoubleSide
+						} );
+						
+				var bumpMesh = new THREE.Mesh( geometry, material );
+					bumpMesh.rotation.x = -Math.PI/2;
+					bumpMesh.position.set( 0, -U, 0 );
+					bumpMesh.castShadow = true;
+					bumpMesh.receiveShadow = true;
+
+				var mesh = new THREE.Group();
+				mesh.add( plateMesh, bumpMesh );
+				scene.add( mesh );
+				
+				return mesh;
+			}
+			
+			var pos = FRAME_WIDTH+A/K-FRAME_SIZE/2;
+			
+			tile1 = newTile();
+			tile1.position.set( pos, FRAME_GROOVE, -pos );
+			
+			tile2 = newTile();
+			tile2.position.set( -pos, FRAME_GROOVE, -pos );
+			tile2.rotation.y = Math.PI/2;
+			
+			tile3 = newTile();
+			tile3.position.set( -pos, FRAME_GROOVE, pos );
+			tile3.rotation.y = 2*Math.PI/2;
+			
+			tile3 = newTile();
+			tile3.position.set( pos, FRAME_GROOVE, pos );
+			tile3.rotation.y = 3*Math.PI/2;
+			
+			
 		</script>
 		
 	</body>
