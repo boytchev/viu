@@ -3,19 +3,21 @@
 <html>
 	<head>
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<script src="js/three.min.js"></script>
-		<script src="js/OrbitControls.js"></script>
-		<link rel="stylesheet" href="css/viu.css">
+		<script src="../js/three.min.js"></script>
+		<!--script src="js/CSG.js"></script-->
+		<script src="../js/OrbitControls.js"></script>
+		<link rel="stylesheet" href="../css/viu.css">
 	</head>
 	
 	<body>
-		<script>
+		<script type="module">
+            import CSG from '../js/three-csg.js';
 			// construct and setup the scene
 			
 			var renderer = new THREE.WebGLRenderer( {antialias:true} );
 				renderer.setAnimationLoop( animate );
 				renderer.shadowMap.enabled = true;
-				renderer.shadowMap.type = THREE.PCFSoftShadowMap; 
+				renderer.shadowMap.type = THREE.VSMShadowMap//PCFSoftShadowMap; 
 				document.body.appendChild( renderer.domElement );
 
 			var scene = new THREE.Scene();
@@ -25,25 +27,33 @@
 				camera.position.set( 40, 80, 40 );
 				camera.lookAt( scene.position );
 			
-			var light = new THREE.SpotLight( 'white', 0.5 );
-				light.position.set( 70*2, 45*2, 70*2 );
+			var light = new THREE.SpotLight( 'white', 1.3 );
+				light.position.set( 80*10, 50*10, 40*10 );
 				light.target = scene;
-				light.angle = Math.PI/3/4;
-				light.penumbra = 1;
+				light.angle = Math.PI/3/20;
+				light.penumbra = 1/2;
 				light.castShadow = true;
-				light.shadow.mapSize.width = 1024/4; 
-				light.shadow.mapSize.height = 1024/4; 
-				light.shadow.camera.near = 20; 
-				light.shadow.camera.far = 500; 
-				light.shadow.camera.left = -200; 
-				light.shadow.camera.right = 200; 
-				light.shadow.camera.top = -100; 
-				light.shadow.camera.bottom = 100; 
-				light.shadow.bias = -0.001; 
-				light.shadow.radius = 10;
+				light.shadow.mapSize.width = 2024/8; 
+				light.shadow.mapSize.height = 2024/8; 
+				light.shadow.camera.near = 900; 
+				light.shadow.camera.far = 1800; 
+				light.shadow.camera.left = -300; 
+				light.shadow.camera.right = 300; 
+				light.shadow.camera.top = -300; 
+				light.shadow.camera.bottom = 300; 
+				//light.shadow.bias = 0.0001; 
+				light.shadow.radius = 3;
 
 				scene.add( light );
-				scene.add( new THREE.AmbientLight( 'white', 0.3 ) );
+
+			var light = new THREE.SpotLight( 'white', 0.3 );
+				light.position.set( -80*10, 50*10, -40*10 );
+				light.target = scene;
+				light.angle = Math.PI/3/20;
+				light.penumbra = 1/2;
+
+				scene.add( light );
+
 
 			var controls = new THREE.OrbitControls( camera, renderer.domElement );
 				controls.maxPolarAngle = Math.PI * 0.495;
@@ -84,40 +94,43 @@
 				renderer.render( scene, camera );
 			}
 			
-		</script>
-
-		<script>
 
 			// triangle sides
 			
-			A = 20;
-			B = 40;
-			C = Math.sqrt(A*A+B*B);
-			K = 3;
+			var A = 20;
+			var B = 40;
+			var C = Math.sqrt(A*A+B*B);
+			var K = 3;
+			var ANGLE = Math.atan2(A,B);
 			
 			console.assert( A <= B );
 
 			// other parameters
 			
 			const FRAME_WIDTH = 5;
-			const FRAME_RADIUS = 5;
-			const INNER_RADIUS = 2;
-			const FRAME_HEIGHT = 4;
-			const FRAME_BASE = 1;
-			const FRAME_GROOVE = 2;
 			const FRAME_SIZE = A+B+2*FRAME_WIDTH;
+			const FRAME_HEIGHT = 4;
+			const FRAME_RADIUS = 6;
+			const FRAME_DENT = 2;
+
+			const INNER_RADIUS = 3;
+
+			const GROOVE_DENT = 1;
+			const GROOVE_RADIUS = 2;
+			
 			const TILE_HEIGHT = 1;
 			
+			scene.background = new THREE.Color(0.05,0.055,0.1);
 			
 			// the dark blue cloth
 			function createFloor( )
 			{
-				const size = FRAME_SIZE*3;
+				const size = FRAME_SIZE*30;
 				
-				var texture = new THREE.TextureLoader().load( 'textures/fabric.jpg' );
+				var texture = new THREE.TextureLoader().load( '../textures/fabric.jpg' );
 					texture.wrapS = THREE.RepeatWrapping;
 					texture.wrapT = THREE.RepeatWrapping;
-					texture.repeat.set( 2, 2 );
+					texture.repeat.set( 20, 20 );
 					texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
 				var geometry = new THREE.PlaneGeometry( size, size );
@@ -132,6 +145,7 @@
 						bumpMap: texture } );
 						
 				var mesh = new THREE.Mesh( geometry, material );
+					mesh.position.y = -FRAME_HEIGHT/2;
 					mesh.receiveShadow = true;
 					mesh.rotation.x = -Math.PI/2;
 					
@@ -141,13 +155,158 @@
 			createFloor(  );
 			
 
-			var frameTexture = new THREE.TextureLoader().load( 'textures/concrete.jpg' );
+			var frameTexture = new THREE.TextureLoader().load( '../textures/concrete.jpg' );
 				frameTexture.wrapS = THREE.RepeatWrapping;
 				frameTexture.wrapT = THREE.RepeatWrapping;
-				frameTexture.repeat.set( 1/FRAME_SIZE, 1/FRAME_SIZE );
+				//frameTexture.repeat.set( 1/FRAME_SIZE, FRAME_SIZE );
 				frameTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
+			function clone( object, posX, posZ, rotY=0 )
+			{
+				object = object.clone();
+				object.position.x = posX;
+				object.position.z = posZ;
+				object.rotation.y = THREE.Math.degToRad( rotY );
 
+				return object;
+			}
+			
+			function createEdge(  )
+			{
+				// generate main frame
+				
+				var base1 = new THREE.BoxGeometry( FRAME_SIZE-2*FRAME_RADIUS, FRAME_HEIGHT, FRAME_SIZE ),
+					base2 = base1.clone().rotateY( THREE.Math.degToRad(90) );
+
+				var pos = FRAME_SIZE/2-FRAME_RADIUS;
+				
+				var corner1 = new THREE.CylinderGeometry( FRAME_RADIUS, FRAME_RADIUS, FRAME_HEIGHT, 60 ).translate( pos, 0, pos ),
+					corner2 = corner1.clone().rotateY( Math.PI/2 ),
+					corner3 = corner2.clone().rotateY( Math.PI/2 ),
+					corner4 = corner3.clone().rotateY( Math.PI/2 );
+					
+				var csg = CSG.union([base1,base2,corner1,corner2,corner3,corner4]);
+//const edges = new THREE.EdgesGeometry( geometry, 80 );
+//const line = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 0 } ) );
+//scene.add( line );
+
+				var y = FRAME_HEIGHT/2-FRAME_DENT/2;
+				var base1 = new THREE.BoxGeometry( A+B-2*INNER_RADIUS, FRAME_DENT, A+B ).translate(0,y,0),
+					base2 = base1.clone().rotateY( Math.PI/2 );
+					
+				var pos = (A+B)/2-INNER_RADIUS;
+				
+				var corner1 = new THREE.CylinderGeometry( INNER_RADIUS, INNER_RADIUS, FRAME_DENT, 40 ).translate(pos, y, pos),
+					corner2 = corner1.clone().rotateY( Math.PI/2 ),
+					corner3 = corner2.clone().rotateY( Math.PI/2 ),
+					corner4 = corner3.clone().rotateY( Math.PI/2 );
+				
+				csg = CSG.subtract([csg,base1,base2,corner1,corner2,corner3,corner4]);
+				
+
+
+				var pos = (A+B)/2-A/K;
+
+				var y = FRAME_HEIGHT/2-FRAME_DENT-GROOVE_DENT/2;
+				var corner1 = new THREE.CylinderGeometry( GROOVE_RADIUS, GROOVE_RADIUS, GROOVE_DENT, 40 ).translate(pos, y, pos ),
+					corner2 = corner1.clone().rotateY( Math.PI/2 ),
+					corner3 = corner2.clone().rotateY( Math.PI/2 ),
+					corner4 = corner3.clone().rotateY( Math.PI/2 );
+
+				var side1 = new THREE.BoxGeometry( 2*GROOVE_RADIUS, GROOVE_DENT, 2*pos ).translate(pos, y, 0 ),
+					side2 = side1.clone().rotateY( Math.PI/2 ),
+					side3 = side2.clone().rotateY( Math.PI/2 ),
+					side4 = side3.clone().rotateY( Math.PI/2 );
+					
+				var len = 2*pos/Math.cos(ANGLE);
+				var groove1 = new THREE.BoxGeometry( 2*GROOVE_RADIUS, GROOVE_DENT, len ).translate( 0, 0, len/2 ).rotateY( ANGLE ).translate( -pos, y, -pos ),
+					groove2 = groove1.clone().rotateY( Math.PI/2 ),
+					groove3 = groove2.clone().rotateY( Math.PI/2 ),
+					groove4 = groove3.clone().rotateY( Math.PI/2 );
+
+				csg = CSG.subtract([csg,base1,base2,corner1,corner2,corner3,corner4,side1,side2,side3,side4,groove1,groove2,groove3,groove4]);
+
+				var	geometry = CSG.BufferGeometry(csg);
+/*
+			
+				// punch the grooves
+			
+				var len = 2*pos/Math.cos(ANGLE);
+				var groove1 = new THREE.Mesh( new THREE.BoxGeometry( 2*GROOVE_RADIUS, GROOVE_DENT, len ) ); 
+					groove1.geometry.translate( 0, 0, len/2 );
+					groove1.geometry.rotateY( ANGLE );
+					groove1.position.set( -pos, corner1.position.y, -pos );
+
+				var groove2 = clone( groove1, -pos, pos, 90 );
+				var groove3 = clone( groove1, pos, pos, 180 );
+				var groove4 = clone( groove1, pos, -pos, 270 );
+				
+					
+				var csg = new CSG();
+					csg.subtract( [mesh, corner1, corner2, corner3, corner4, side1, side2, side3, side4, groove1, groove2, groove3, groove4] );
+			
+				var mesh = csg.toMesh();
+
+*/
+var colorData = [];
+var uv = [];
+				var pos = geometry.getAttribute( 'position' );
+				var nor = geometry.getAttribute( 'normal' );
+				//var uv = geometry.getAttribute( 'uv' );
+				
+console.log('->',pos.count);				
+				for( var i=0; i<pos.count; i++ )
+				{
+				
+					var y = pos.getY( i );
+					if( nor.getY(i)>0.5 && y<0 )
+						colorData.push( 0.7,0.6,0.5 );
+					else
+					{
+						colorData.push( 1,1,1 );
+					}
+					
+					
+			//		colorData.push(Math.random(),Math.random(),Math.random());
+					if( nor.getY(i)>0.5 )
+						uv.push( 0.02*pos.getX(i), 0.02*pos.getZ(i) );
+					else
+						uv.push( 0.02*(pos.getX(i)+pos.getZ(i)), 0.02*pos.getY(i) );
+					
+					//if( nor.getY(i)<0.5 )
+					//nor.setY( i, 2 );
+				}
+//				nor.needsUpdate = true;
+
+				geometry.setAttribute( 'uv', new THREE.BufferAttribute(new Float32Array(uv),2) );
+					
+				geometry.setAttribute( 'color', new THREE.BufferAttribute(new Float32Array(colorData),3) );
+
+				var material = new THREE.MeshStandardMaterial( {
+						color: 'white',
+						roughness: 1,
+						metalness: 0,
+						emissive: 'ivory',
+						emissiveIntensity: 0.13,
+						map: frameTexture,
+						bumpMap: frameTexture,
+						bumpScale: 0.15,
+						//side: THREE.DoubleSide,
+						vertexColors: true,
+						//wireframe: true,
+						} );	
+						
+						
+				var mesh = new THREE.Mesh( geometry, material );
+				mesh.castShadow = true;
+				mesh.receiveShadow = true;
+					
+				scene.add( mesh );
+			}
+			
+			createEdge( );
+
+/*
 			function createEdge(  )
 			{
 				const
@@ -304,14 +463,14 @@
 			}
 			
 			createGrooveEdge( );
-
+*/
 
 			function newTile( )
 			{
 				const
-					R = INNER_RADIUS,
+					R = GROOVE_RADIUS,
 					H = TILE_HEIGHT,
-					U = FRAME_GROOVE-FRAME_BASE;
+					U = 1;
 			
 				var shape = new THREE.Shape();
 					shape.moveTo( A/2, 0 );
@@ -326,17 +485,23 @@
 						depth: H,
 						bevelEnabled: false });
 						
-				var material = new THREE.MeshStandardMaterial( {
-						roughness: 0.3,
-						metalness: 0.8,
-						emissive: 'white',
+				var material = new THREE.MeshPhysicalMaterial( {
+					
+						roughness: 0.2,
+						metalness: 0,
+						emissive: 'cornflowerblue',
 						emissiveIntensity: 0.5,
-						map: frameTexture,
-						bumpMap: frameTexture,
-						bumpScale: 0.15,
+						clearcoat: 1,
+						sheen: new THREE.Color('crimson'),
+						//map: frameTexture,
+						//bumpMap: frameTexture,
+						//bumpScale: 0.15,
 						//wireframe: true,
+						transmission: 0.9,
+						thickness: 0,
+						ior: 3,
 						transparent: true,
-						opacity: 0.8,
+						opacity: 1,
 						//side: THREE.DoubleSide
 						} );
 						
@@ -344,8 +509,12 @@
 					plateMesh.rotation.x = -Math.PI/2;
 					plateMesh.position.set( -A/K, 0, A/K );
 					plateMesh.castShadow = true;
-					plateMesh.receiveShadow = true;
+					//plateMesh.receiveShadow = true;
 				
+const edges = new THREE.EdgesGeometry( geometry, 90 );
+const line = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 'navy', transparent: true, opacity: 0.35 } ) );
+plateMesh.add( line );
+
 				var shape = new THREE.Shape();
 					shape.moveTo( 0, 0 );
 					shape.absarc( 0, 0, R, 0, 2*Math.PI );
@@ -356,15 +525,16 @@
 						bevelEnabled: false });
 				
 				var material = new THREE.MeshStandardMaterial( {
-						roughness: 0.3,
+						roughness: 0,
 						metalness: 0,
 						emissive: 'gray',
 						emissiveIntensity: 0.2,
-						map: frameTexture,
-						bumpMap: frameTexture,
-						bumpScale: 0.15,
+						//map: frameTexture,
+						//bumpMap: frameTexture,
+						//bumpScale: 0.15,
 						//wireframe: true,
 						//side: THREE.DoubleSide
+						//
 						} );
 						
 				var bumpMesh = new THREE.Mesh( geometry, material );
@@ -380,23 +550,25 @@
 				return mesh;
 			}
 			
+			
+			
 			var pos = FRAME_WIDTH+A/K-FRAME_SIZE/2;
 			
-			tile1 = newTile();
-			tile1.position.set( pos, FRAME_GROOVE, -pos );
+			var tile1 = newTile();
+			tile1.position.set( pos, 0.1, -pos );
 			
-			tile2 = newTile();
-			tile2.position.set( -pos, FRAME_GROOVE, -pos );
+			var tile2 = newTile();
+			tile2.position.set( -pos, 0.1, -pos );
 			tile2.rotation.y = Math.PI/2;
 			
-			tile3 = newTile();
-			tile3.position.set( -pos, FRAME_GROOVE, pos );
+			var tile3 = newTile();
+			tile3.position.set( -pos, 0.1, pos );
 			tile3.rotation.y = 2*Math.PI/2;
 			
-			tile3 = newTile();
-			tile3.position.set( pos, FRAME_GROOVE, pos );
-			tile3.rotation.y = 3*Math.PI/2;
-			
+			var tile4 = newTile();
+			tile4.position.set( pos, 0.1, pos );
+			tile4.rotation.y = 3*Math.PI/2;
+		
 			
 		</script>
 		
