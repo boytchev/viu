@@ -87,6 +87,117 @@ function onWindowResize( event )
 }			
 
 
+// manage interactivity events
+
+var mouse = new THREE.Vector2(), // current mouse or touch position
+	raycaster = new THREE.Raycaster(),
+	activeTile = undefined; // currently selected tile
+
+export var tiles = [];
+
+document.addEventListener('mousedown', onMouseDown);
+document.addEventListener('mouseup', onMouseUp);
+document.addEventListener('mousemove', onMouseMove);
+
+document.addEventListener('touchstart', onMouseDown);
+document.addEventListener('touchend', onMouseUp);
+document.addEventListener('touchcancel', onMouseUp);
+document.addEventListener('touchmove', onMouseMove);
+
+
+function pointedTile()
+{
+	raycaster.setFromCamera( mouse, camera );
+
+	var intersects = raycaster.intersectObjects( tiles, true);
+	if( intersects.length )
+	{
+		var object = intersects[0].object;
+		while( !object.isTile ) object = object.parent;
+		return object;
+	}
+	else
+		return null;
+}
+
+
+function onMouseDown(event)
+{
+	userInput(event);
+
+//	gauge.parent?.remove(gauge);
+//	dragPoint.parent?.remove(dragPoint);
+
+	raycaster.setFromCamera( mouse, camera );
+
+	var intersects = raycaster.intersectObjects( tiles );
+	if( intersects.length )
+	{
+		controls.enabled = false;
+
+		activeTile = intersects[0].object;
+
+	//	select(model[name]);
+
+//		dragPoint.position.copy(obj.worldToLocal(intersects[0].point));
+//		obj.imageWrapper.add(dragPoint);
+
+//		if (!cbMovY.checked) obj.imageWrapper.add(gauge);
+//		gauge.position.y = (obj instanceof Ankle) ? 2 : 0;
+	}
+}
+
+
+function onMouseUp(event)
+{
+	controls.enabled = true;
+//	mouseButton = undefined;
+	//deselect();
+//	renderer.setAnimationLoop(null);
+//	renderer.render(scene, camera);
+}
+
+
+function onMouseMove(event)
+{
+	//if( activeTile ) 
+	userInput(event);
+	
+	var tile = pointedTile();
+	if( tile )
+	{
+		tile.children[0].material.color = new THREE.Color( 'yellow' );
+		tile.children[1].material.color = new THREE.Color( 'yellow' );
+		tile.children[1].material.metalness = 0;
+	}
+}
+
+
+function userInput(event)
+{
+	if (event instanceof MouseEvent)
+	{
+		event.preventDefault();
+
+//		mouseInterface = true;
+//		mouseButton = event.buttons || 0x1;
+
+		mouse.x = event.clientX / window.innerWidth * 2 - 1;
+		mouse.y = -event.clientY / window.innerHeight * 2 + 1;
+	}
+
+	if (window.TouchEvent && event instanceof TouchEvent && event.touches.length == 1)
+	{
+//		mouseButton = 0x1;
+
+//		touchInterface = true;
+		mouse.x = event.touches[0].clientX / window.innerWidth * 2 - 1;
+		mouse.y = -event.touches[0].clientY / window.innerHeight * 2 + 1;
+	}
+}
+
+
+
 // main animation cycle
 function animate( time )
 {

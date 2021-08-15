@@ -3,7 +3,7 @@
 
 import {FRAME_SIZE, TILE_HEIGHT, FRAME_WIDTH, A, B, K, GROOVE_DENT, GROOVE_RADIUS
 /*FRAME_HEIGHT, FRAME_RADIUS, FRAME_DENT, INNER_RADIUS, B, ANGLE*/} from './config.js';
-import {scene, MAX_ANISOTROPY} from './init.js';
+import {scene, MAX_ANISOTROPY, tiles} from './init.js';
 
 
 // create and return a new tile1
@@ -46,9 +46,10 @@ function newTile( )
 		plateMesh.position.set( -A/K, 0, A/K );
 		plateMesh.castShadow = true;
 				
-//const edges = new THREE.EdgesGeometry( geometry, 90 );
-//const line = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 'navy', transparent: true, opacity: 0.35 } ) );
-//plateMesh.add( line );
+	var line = new THREE.LineSegments( 
+			new THREE.EdgesGeometry( geometry, 90 ),
+			new THREE.LineBasicMaterial( { color: 'navy', transparent: true, opacity: 0.35 } ) );
+		plateMesh.add( line );
 
 	var shape = new THREE.Shape();
 		shape.moveTo( 0, 0 );
@@ -60,13 +61,14 @@ function newTile( )
 			bevelEnabled: false,
 	});
 			
-	var material = new THREE.MeshStandardMaterial( {
-			roughness: 0,
+	var material = new THREE.MeshPhysicalMaterial( {
+			roughness: 1,
 			metalness: 0,
-			emissive: 'gray',
-			emissiveIntensity: 0.2,
-	});
-	
+			color: 'cornflowerblue',
+			clearcoat: 1,
+			sheen: new THREE.Color('crimson'),
+		});
+				
 	var bumpMesh = new THREE.Mesh( geometry, material );
 		bumpMesh.rotation.x = -Math.PI/2;
 		bumpMesh.position.set( 0, -GROOVE_DENT, 0 );
@@ -74,7 +76,8 @@ function newTile( )
 		bumpMesh.receiveShadow = true;
 
 	var mesh = new THREE.Group();
-		mesh.add( plateMesh, bumpMesh );
+		mesh.isTile = true;
+		mesh.add( bumpMesh, plateMesh );
 		
 	scene.add( mesh );
 			
@@ -99,4 +102,4 @@ var tile4 = newTile();
 	tile4.position.set( x, 0.1, x );
 	tile4.rotation.y = 3*Math.PI/2;
 
-export {tile1, tile2, tile3, tile4};
+tiles.push( tile1, tile2, tile3, tile4 );
