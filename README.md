@@ -20,5 +20,5 @@ to demonstrate other geometrical relations, like areas of parallelograms.
 ### TODO
 
 * restrict motion base on colission
-* add horizontal grooves for tile vertices
 * add braille notations
+* add some problems and explanations
