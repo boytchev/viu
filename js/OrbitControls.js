@@ -144,6 +144,12 @@
 
 			}; // this method is exposed, but perhaps it would be better if we can make it private...
 
+			this.resetState = function () {
+
+				state = STATE.NONE;
+
+			}; // added by P. Boytchev
+
 
 			this.update = function () {
 

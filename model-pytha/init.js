@@ -60,6 +60,11 @@ var subLight = new THREE.SpotLight( 'white', 0.3 );
 
 // interactive mouse and touch controllers
 
+// 	the definition is extended by
+//		this.resetState = function () {
+//				state = STATE.NONE;
+//			}; // added by P. Boytchev
+
 var controls = new THREE.OrbitControls( camera, renderer.domElement );
 	controls.maxPolarAngle = Math.PI * 0.495;
 	controls.minDistance = 20;
@@ -71,7 +76,6 @@ var controls = new THREE.OrbitControls( camera, renderer.domElement );
 	controls.screenSpacePanning = false;
 	controls.target.set( 0, 0, 0 );
 	controls.update();
-	
 	
 // manage window rezie or smartphone rotation
 			
@@ -91,9 +95,12 @@ function onWindowResize( event )
 
 var mouse = new THREE.Vector2(), // current mouse or touch position
 	raycaster = new THREE.Raycaster(),
-	activeTile = undefined; // currently selected tile
+	dragging = false;
 
-export var tiles = [];
+import {Tile, tiles, blur, activeTile} from './tiles.js';
+
+scene.add( ...tiles );
+
 
 document.addEventListener('mousedown', onMouseDown);
 document.addEventListener('mouseup', onMouseUp);
@@ -123,52 +130,54 @@ function pointedTile()
 
 function onMouseDown(event)
 {
-	userInput(event);
-
-//	gauge.parent?.remove(gauge);
-//	dragPoint.parent?.remove(dragPoint);
-
-	raycaster.setFromCamera( mouse, camera );
-
-	var intersects = raycaster.intersectObjects( tiles );
-	if( intersects.length )
-	{
-		controls.enabled = false;
-
-		activeTile = intersects[0].object;
-
-	//	select(model[name]);
-
-//		dragPoint.position.copy(obj.worldToLocal(intersects[0].point));
-//		obj.imageWrapper.add(dragPoint);
-
-//		if (!cbMovY.checked) obj.imageWrapper.add(gauge);
-//		gauge.position.y = (obj instanceof Ankle) ? 2 : 0;
-	}
-}
-
-
-function onMouseUp(event)
-{
-	controls.enabled = true;
-//	mouseButton = undefined;
-	//deselect();
-//	renderer.setAnimationLoop(null);
-//	renderer.render(scene, camera);
-}
-
-
-function onMouseMove(event)
-{
-	//if( activeTile ) 
+	dragging = true;
+	
+//	controls.enabled = true;
 	userInput(event);
 	
 	var tile = pointedTile();
 	if( tile )
 	{
-		tile.children[0].material.color = new THREE.Color( 'yellow' );
-		tile.children[1].material.color = new THREE.Color( 'yellow' );
-		tile.children[1].material.metalness = 0;
+		controls.enabled = false;
+		tile.focus();
+	}
+	else
+	{
+	}
+}
+
+
+
+function onMouseUp(event)
+{
+	controls.resetState();
+	controls.enabled = true;
+	dragging = false;
+}
+
+
+function onMouseMove(event)
+{
+	userInput(event);
+	
+	if( dragging )
+	{
+		// dragging scene or tile
+		if( activeTile )
+		{
+			console.log( mouse.x, mouse.y );
+		}
+	}
+	else
+	{
+		// moving the cursor
+		userInput(event);
+		
+		var tile = pointedTile();
+		if( tile )
+			tile.focus();
+		else
+			blur();
 	}
 }
 
@@ -197,6 +206,7 @@ function userInput(event)
 }
 
 
+export var dragControls;
 
 // main animation cycle
 function animate( time )
