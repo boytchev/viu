@@ -1,7 +1,7 @@
 ﻿
 // create four tiles
 
-import {FRAME_SIZE, TILE_HEIGHT, FRAME_WIDTH, A, B, K, GROOVE_DENT, GROOVE_RADIUS
+import {FRAME_SIZE, TILE_HEIGHT, FRAME_WIDTH, A, B, GROOVE_DENT, GROOVE_RADIUS
 /*FRAME_HEIGHT, FRAME_RADIUS, FRAME_DENT, INNER_RADIUS, B, ANGLE*/} from './config.js';
 import {scene} from './init.js';
 
@@ -41,16 +41,16 @@ export class Tile extends THREE.Group
 				emissiveIntensity: 0.5,
 				clearcoat: 1,
 				sheen: new THREE.Color('crimson'),
-				transmission: 0.9,
+				transmission: 1,
 				thickness: 0,
-				ior: 3,
+				ior: 0,
 				transparent: true,
 				opacity: 1,
 			});
 					
 		this.plateMesh = new THREE.Mesh( geometry, material );
 		this.plateMesh.rotation.x = -Math.PI/2;
-		this.plateMesh.position.set( -A/K, 0, A/K );
+		this.plateMesh.position.set( -A/2, 0, A/2 );
 		this.plateMesh.castShadow = true;
 					
 		this.lineMesh = new THREE.LineSegments( 
@@ -114,7 +114,7 @@ export function blur()
 		
 		
 		
-var x = A/K-FRAME_SIZE/2;
+var x = A/2-FRAME_SIZE/2;
 			
 var tile1 = new Tile();
 	tile1.position.set( x, 0.1, -x );

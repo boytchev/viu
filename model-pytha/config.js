@@ -12,19 +12,17 @@ export const FRAME_DENT 	= 2;	// inset in the frame for tiles
 
 export const INNER_RADIUS 	= 3;	// internal corner radius of the frame
 
-export const GROOVE_DENT = 1;
-export const GROOVE_RADIUS = 1/2;
+export const GROOVE_DENT = 1/3;
+export const GROOVE_RADIUS = 1;
 
 export const TILE_HEIGHT = 1;
 
 
 // sides of the triangle tiles
 
-export const A = 20;
+export const A =18; // use these values 10, 15, 20, 30
 export const B = FRAME_SIZE-A;
 export const C = Math.sqrt(A*A+B*B);
-
-export const K = 2;	// position of the handle (at distance A/K from the right angle
 
 export const ANGLE = Math.atan2(A,B);
 
