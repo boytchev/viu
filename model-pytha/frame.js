@@ -2,7 +2,7 @@
 // create the static frame of the model
 
 import {FRAME_HEIGHT, FRAME_SIZE, FRAME_RADIUS, FRAME_WIDTH, FRAME_DENT, INNER_RADIUS, A, K, GROOVE_DENT, GROOVE_RADIUS, ANGLE} from './config.js';
-import {scene, MAX_ANISOTROPY} from './init.js';
+import {MAX_ANISOTROPY, scene} from './init.js';
 
 
 var texture = new THREE.TextureLoader().load( '../textures/concrete.jpg' );
@@ -79,6 +79,13 @@ var side1 = new THREE.BoxGeometry( 2*GROOVE_RADIUS, GROOVE_DENT, 2*x ).translate
 	side3 = side2.clone().rotateY( Math.PI/2 ),
 	side4 = side3.clone().rotateY( Math.PI/2 );
 
+// 3.2: bars at the sides
+
+var inside1 = new THREE.BoxGeometry( 2*GROOVE_RADIUS, GROOVE_DENT, 2*x ).translate( x-A, y, 0 ),
+	inside2 = inside1.clone().rotateY( Math.PI/2 ),
+	inside3 = inside2.clone().rotateY( Math.PI/2 ),
+	inside4 = inside3.clone().rotateY( Math.PI/2 );
+
 // 3.3: internal cross-bars
 
 var len = 2*x/Math.cos(ANGLE);
@@ -90,7 +97,7 @@ var groove1 = new THREE.BoxGeometry( 2*GROOVE_RADIUS, GROOVE_DENT, len ).transla
 
 // 3.4: cut off from rounded platform
 
-csg = CSG.subtract([ csg, corner1, corner2, corner3, corner4, side1, side2, side3, side4, groove1, groove2, groove3, groove4]);
+csg = CSG.subtract([ csg, corner1, corner2, corner3, corner4, side1, side2, side3, side4, inside1, inside2, inside3, inside4, groove1, groove2, groove3, groove4]);
 
 
 
@@ -164,3 +171,17 @@ var mesh = new THREE.Mesh( geometry, material );
 		
 scene.add( mesh );
 
+
+
+// create invisible sensitive frame to check pointer by the user position
+
+export var sensorPlane = new THREE.Mesh( 
+		new THREE.PlaneGeometry( FRAME_SIZE, FRAME_SIZE ).rotateX( -Math.PI/2 ).translate( 0, FRAME_HEIGHT/2-1/2, 0 ),
+		new THREE.MeshBasicMaterial( {color: 'yellow', transparent: true, opacity: 0.3} ) // temporary visible
+	);
+	
+export var sensorPoint = new THREE.Mesh( 
+		new THREE.SphereGeometry( 1 ),
+		new THREE.MeshBasicMaterial( {color: 'yellow'} ) // temporary existing
+	);
+//scene.add( sensorPlane, sensorPoint );

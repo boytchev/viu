@@ -3,7 +3,7 @@
 
 import {FRAME_SIZE, TILE_HEIGHT, FRAME_WIDTH, A, B, K, GROOVE_DENT, GROOVE_RADIUS
 /*FRAME_HEIGHT, FRAME_RADIUS, FRAME_DENT, INNER_RADIUS, B, ANGLE*/} from './config.js';
-import {scene, MAX_ANISOTROPY, dragControls} from './init.js';
+import {scene} from './init.js';
 
 
 export var activeTile;
@@ -133,4 +133,6 @@ var tile4 = new Tile();
 
 
 export var tiles = [tile1, tile2, tile3, tile4];
+
+scene.add( ...tiles );
 

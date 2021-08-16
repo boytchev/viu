@@ -12,6 +12,8 @@ var renderer = new THREE.WebGLRenderer( {antialias:true} );
 	document.body.appendChild( renderer.domElement );
 
 
+const MAX_ANISOTROPY = renderer.capabilities.getMaxAnisotropy();
+
 // scene
 
 var scene = new THREE.Scene();
@@ -91,132 +93,12 @@ function onWindowResize( event )
 }			
 
 
-// manage interactivity events
-
-var mouse = new THREE.Vector2(), // current mouse or touch position
-	raycaster = new THREE.Raycaster(),
-	dragging = false;
-
-import {Tile, tiles, blur, activeTile} from './tiles.js';
-
-scene.add( ...tiles );
-
-
-document.addEventListener('mousedown', onMouseDown);
-document.addEventListener('mouseup', onMouseUp);
-document.addEventListener('mousemove', onMouseMove);
-
-document.addEventListener('touchstart', onMouseDown);
-document.addEventListener('touchend', onMouseUp);
-document.addEventListener('touchcancel', onMouseUp);
-document.addEventListener('touchmove', onMouseMove);
-
-
-function pointedTile()
-{
-	raycaster.setFromCamera( mouse, camera );
-
-	var intersects = raycaster.intersectObjects( tiles, true);
-	if( intersects.length )
-	{
-		var object = intersects[0].object;
-		while( !object.isTile ) object = object.parent;
-		return object;
-	}
-	else
-		return null;
-}
-
-
-function onMouseDown(event)
-{
-	dragging = true;
-	
-//	controls.enabled = true;
-	userInput(event);
-	
-	var tile = pointedTile();
-	if( tile )
-	{
-		controls.enabled = false;
-		tile.focus();
-	}
-	else
-	{
-	}
-}
-
-
-
-function onMouseUp(event)
-{
-	controls.resetState();
-	controls.enabled = true;
-	dragging = false;
-}
-
-
-function onMouseMove(event)
-{
-	userInput(event);
-	
-	if( dragging )
-	{
-		// dragging scene or tile
-		if( activeTile )
-		{
-			console.log( mouse.x, mouse.y );
-		}
-	}
-	else
-	{
-		// moving the cursor
-		userInput(event);
-		
-		var tile = pointedTile();
-		if( tile )
-			tile.focus();
-		else
-			blur();
-	}
-}
-
-
-function userInput(event)
-{
-	if (event instanceof MouseEvent)
-	{
-		event.preventDefault();
-
-//		mouseInterface = true;
-//		mouseButton = event.buttons || 0x1;
-
-		mouse.x = event.clientX / window.innerWidth * 2 - 1;
-		mouse.y = -event.clientY / window.innerHeight * 2 + 1;
-	}
-
-	if (window.TouchEvent && event instanceof TouchEvent && event.touches.length == 1)
-	{
-//		mouseButton = 0x1;
-
-//		touchInterface = true;
-		mouse.x = event.touches[0].clientX / window.innerWidth * 2 - 1;
-		mouse.y = -event.touches[0].clientY / window.innerHeight * 2 + 1;
-	}
-}
-
-
-export var dragControls;
-
 // main animation cycle
+
 function animate( time )
 {
 	controls.update();
 	renderer.render( scene, camera );
 }
 
-
-const MAX_ANISOTROPY = renderer.capabilities.getMaxAnisotropy();
-
-
-export {scene, MAX_ANISOTROPY}
+export {scene, camera, controls, MAX_ANISOTROPY};

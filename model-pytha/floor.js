@@ -2,7 +2,7 @@
 // create the textile floor
 
 import {FRAME_HEIGHT} from './config.js';
-import {scene, MAX_ANISOTROPY} from './init.js';
+import {MAX_ANISOTROPY, scene} from './init.js';
 
 
 const SIZE = 1000;

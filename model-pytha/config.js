@@ -10,10 +10,10 @@ export const FRAME_HEIGHT 	= 4;	// outer height of the frame
 export const FRAME_RADIUS 	= 6;	// outer corner radius of the frame
 export const FRAME_DENT 	= 2;	// inset in the frame for tiles
 
-export const INNER_RADIUS 			= 3;	// internal corner radius of the frame
+export const INNER_RADIUS 	= 3;	// internal corner radius of the frame
 
 export const GROOVE_DENT = 1;
-export const GROOVE_RADIUS = 2;
+export const GROOVE_RADIUS = 1/2;
 
 export const TILE_HEIGHT = 1;
 
@@ -24,7 +24,7 @@ export const A = 20;
 export const B = FRAME_SIZE-A;
 export const C = Math.sqrt(A*A+B*B);
 
-export const K = 3;	// position of the handle (at distance A/K from the right angle
+export const K = 2;	// position of the handle (at distance A/K from the right angle
 
 export const ANGLE = Math.atan2(A,B);
 

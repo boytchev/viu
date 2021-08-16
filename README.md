@@ -14,5 +14,11 @@ triangles that can slide inside a frame. The triangles can be moved
 in a way to recreate the proof of the theorem. The model can be used
 to demonstrate other geometrical relations, like areas of parallelograms.
 
-[<img src="model-pytha/snapshot1.jpg">](https://boytchev.github.io/viu/model-pytha/model-pytha.html)
+[<img src="model-pytha/snapshot1.jpg">](https://boytchev.github.io/viu/model-pytha/index.html)
 [Live demo](https://boytchev.github.io/viu/model-pytha/model-pytha.html)
+
+### TODO
+
+* restric motion base on colission
+* add horizontal grooves for tile vertices
+* add braille notations
