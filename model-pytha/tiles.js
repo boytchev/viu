@@ -4,6 +4,7 @@
 import {FRAME_SIZE, TILE_HEIGHT, FRAME_WIDTH, A, B, GROOVE_DENT, GROOVE_RADIUS
 /*FRAME_HEIGHT, FRAME_RADIUS, FRAME_DENT, INNER_RADIUS, B, ANGLE*/} from './config.js';
 import {scene} from './init.js';
+import {gapPos} from './frame.js';
 
 
 export var activeTile;
@@ -106,6 +107,27 @@ export class Tile extends THREE.Group
 		activeTile = undefined;
 	} // Tile.focus
 	
+	
+	// snaps the tile to the nearest groove dot
+	snapToDot()
+	{
+		var snapPos = this.position,
+			bestDist = Infinity;
+			
+		for( var pos of gapPos )
+		{
+			var d = this.position.distanceTo( pos );
+			if( d < bestDist )
+			{
+				bestDist = d;
+				snapPos = pos;
+			}
+		}
+		
+		this.position.copy( snapPos );
+		
+	} // Tile.snapToDot
+	
 } // Tile			
 		
 
@@ -115,8 +137,7 @@ export function blur()
 	if( activeTile ) activeTile.blur();
 }
 		
-		
-		
+				
 		
 var x = A/2-FRAME_SIZE/2;
 			

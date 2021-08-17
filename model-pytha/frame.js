@@ -77,7 +77,7 @@ var y = FRAME_HEIGHT/2-FRAME_DENT;
 //axesHelper.position.set(x-A*A*B/(A*A+B*B),0, x-A*B*B/(A*A+B*B));
 //scene.add( axesHelper );
 
-var gapPos = [];
+export var gapPos = [];
 
 function addGapPos( )
 {

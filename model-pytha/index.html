@@ -103,6 +103,7 @@ function onMouseDown(event)
 
 function onMouseUp(event)
 {
+	if( activeTile ) activeTile.snapToDot();
 	controls.resetState();
 	controls.enabled = true;
 	dragging = false;
