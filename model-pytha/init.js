@@ -68,7 +68,7 @@ var subLight = new THREE.SpotLight( 'white', 0.3 );
 //			}; // added by P. Boytchev
 
 var controls = new THREE.OrbitControls( camera, renderer.domElement );
-	controls.maxPolarAngle = Math.PI * 0.495;
+	controls.maxPolarAngle = Math.PI * 0.3;
 	controls.minDistance = 20;
 	controls.maxDistance = 100;
 	controls.enableDamping = true;

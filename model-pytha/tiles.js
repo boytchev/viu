@@ -62,28 +62,32 @@ export class Tile extends THREE.Group
 			shape.moveTo( 0, 0 );
 			shape.absarc( 0, 0, R, 0, 2*Math.PI );
 				
-		var geometry = new THREE.ExtrudeGeometry( shape, {
-				steps: 1,
-				depth: 2*GROOVE_DENT+TILE_HEIGHT,
-				bevelEnabled: false,
-		});
+		var geometry = new THREE.SphereGeometry( R, 30, 10, 0, 2*Math.PI, 0, Math.PI/2 ).scale(1,0.5,1);
 				
+		this.bumpMesh = new THREE.Mesh( geometry, material );
+		this.bumpMesh.position.y = TILE_HEIGHT;
+		//this.bumpMesh.castShadow = true;
+		//this.bumpMesh.receiveShadow = true;
+
 		var material = new THREE.MeshPhysicalMaterial( {
 				roughness: 1,
 				metalness: 0,
 				color: 'cornflowerblue',
 				clearcoat: 1,
 				sheen: new THREE.Color('crimson'),
+				//side: THREE.DoubleSide,
+				//transparent: true,
+				//opacity: 0.7,
 			});
 					
-		this.bumpMesh = new THREE.Mesh( geometry, material );
-		this.bumpMesh.rotation.x = -Math.PI/2;
-		this.bumpMesh.position.set( 0, -GROOVE_DENT, 0 );
-		this.bumpMesh.castShadow = true;
-		this.bumpMesh.receiveShadow = true;
+		this.bumpSubMesh = new THREE.Mesh( geometry, material );
+		this.bumpSubMesh.position.y = TILE_HEIGHT/2;
+		this.bumpSubMesh.rotation.x = Math.PI;
+		this.bumpSubMesh.castShadow = true;
+		this.bumpSubMesh.receiveShadow = true;
 
 		this.isTile = true;
-		this.add( this.bumpMesh, this.plateMesh );
+		this.add( this.bumpSubMesh, this.bumpMesh, this.plateMesh );
 	} // Tile.constructor
 
 

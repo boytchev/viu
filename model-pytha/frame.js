@@ -63,7 +63,7 @@ csg = CSG.subtract( [csg, base1, base2, corner1, corner2, corner3, corner4 ]);
 
 // 3.1: cylinders at the corners
 
-var x = FRAME_SIZE/2-A/2;
+var x = z = FRAME_SIZE/2-A/2;
 
 var y = FRAME_HEIGHT/2-FRAME_DENT;
 
@@ -77,22 +77,38 @@ var y = FRAME_HEIGHT/2-FRAME_DENT;
 //axesHelper.position.set(x-A*A*B/(A*A+B*B),0, x-A*B*B/(A*A+B*B));
 //scene.add( axesHelper );
 
+var gapPos = [];
+
+function addGapPos( )
+{
+	gapPos.push( new THREE.Vector3(  x, y,  z ) );
+	gapPos.push( new THREE.Vector3( -z, y,  x ) );
+	gapPos.push( new THREE.Vector3( -x, y, -z ) );
+	gapPos.push( new THREE.Vector3(  z, y, -x ) );
+}
+
+addGapPos( );
+
+x = x-A;
+addGapPos( );
+
+z = z-A;
+addGapPos( );
+
+x = x+A;
+addGapPos( );
+
+
+var gapGeometry = new THREE.OctahedronGeometry( GROOVE_RADIUS, 2 ).scale(1,GROOVE_DENT/GROOVE_RADIUS,1),
+	gaps = [];
+
+for( var pos of gapPos )
+{
+	gaps.push( new THREE.OctahedronGeometry( GROOVE_RADIUS, 2 ).scale(1,GROOVE_DENT/GROOVE_RADIUS,1).translate( pos.x, pos.y, pos.z ) );
+}
+
+/* // possibly unused gaps
 var gap1 = new THREE.OctahedronGeometry( GROOVE_RADIUS, 2 ).scale(1,GROOVE_DENT/GROOVE_RADIUS,1).translate( x, y, x ),
-	gap2 = gap1.clone().rotateY( Math.PI/2 ),
-	gap3 = gap2.clone().rotateY( Math.PI/2 ),
-	gap4 = gap3.clone().rotateY( Math.PI/2 );
-var gap1a = gap1.clone().translate( -A, 0, 0 ),
-	gap2a = gap1a.clone().rotateY( Math.PI/2 ),
-	gap3a = gap2a.clone().rotateY( Math.PI/2 ),
-	gap4a = gap3a.clone().rotateY( Math.PI/2 );
-var gap1b = gap1a.clone().translate( 0, 0, -A ),
-	gap2b = gap1b.clone().rotateY( Math.PI/2 ),
-	gap3b = gap2b.clone().rotateY( Math.PI/2 ),
-	gap4b = gap3b.clone().rotateY( Math.PI/2 );
-var gap1c = gap1b.clone().translate( A, 0, 0 ),
-	gap2c = gap1c.clone().rotateY( Math.PI/2 ),
-	gap3c = gap2c.clone().rotateY( Math.PI/2 ),
-	gap4c = gap3c.clone().rotateY( Math.PI/2 );
 var gap1d = gap1.clone().translate( A*(B-A)/B-B, 0, -A ),
 	gap2d = gap1d.clone().rotateY( Math.PI/2 ),
 	gap3d = gap2d.clone().rotateY( Math.PI/2 ),
@@ -105,8 +121,10 @@ var gap1f = gap1.clone().translate( -A*A*B/(A*A+B*B), 0, -A*B*B/(A*A+B*B) ),
 	gap2f = gap1f.clone().rotateY( Math.PI/2 ),
 	gap3f = gap2f.clone().rotateY( Math.PI/2 ),
 	gap4f = gap3f.clone().rotateY( Math.PI/2 );
+*/
 
 // 3.2: bars at the sides
+var x = FRAME_SIZE/2-A/2;
 
 var side1 = new THREE.BoxGeometry( GROOVE_DENT, GROOVE_DENT, 2*x ).rotateZ( Math.PI/4 ).scale(1,1/3,1).translate( x, y, 0 ),
 	side2 = side1.clone().rotateY( Math.PI/2 ),
@@ -131,7 +149,7 @@ var groove1 = new THREE.BoxGeometry( GROOVE_DENT, GROOVE_DENT, len ).rotateZ( Ma
 
 // 3.4: cut off from rounded platform
 
-csg = CSG.subtract([ csg, /*corner1, corner2, corner3, corner4,*/ side1, side2, side3, side4, inside1, inside2, inside3, inside4, groove1, groove2, groove3, groove4, gap1, gap2, gap3, gap4, gap1a, gap2a, gap3a, gap4a, gap1b, gap2b, gap3b, gap4b, gap1c, gap2c, gap3c, gap4c, gap1d, gap2d, gap3d, gap4d, gap1e, gap2e, gap3e, gap4e, gap1f, gap2f, gap3f, gap4f]);
+csg = CSG.subtract([ csg, side1, side2, side3, side4, inside1, inside2, inside3, inside4, groove1, groove2, groove3, groove4, ...gaps/*gap1d, gap2d, gap3d, gap4d, gap1e, gap2e, gap3e, gap4e, gap1f, gap2f, gap3f, gap4f*/]);
 
 
 

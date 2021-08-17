@@ -13,7 +13,7 @@ export const FRAME_DENT 	= 2;	// inset in the frame for tiles
 export const INNER_RADIUS 	= 3;	// internal corner radius of the frame
 
 export const GROOVE_DENT = 1/3;
-export const GROOVE_RADIUS = 1;
+export const GROOVE_RADIUS = 2;
 
 export const TILE_HEIGHT = 1;
 
