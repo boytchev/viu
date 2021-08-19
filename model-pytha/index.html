@@ -92,6 +92,8 @@ function onMouseDown(event)
 		{
 			activeTile.dX = activeTile.position.x - pos.x;
 			activeTile.dZ = activeTile.position.z - pos.z;
+			activeTile.x = activeTile.position.x;
+			activeTile.z = activeTile.position.z;
 		}
 	}
 	else
@@ -124,8 +126,7 @@ function onMouseMove(event)
 			var pos = pointedLocation();
 			if( pos )
 			{
-				activeTile.position.x = pos.x + activeTile.dX;
-				activeTile.position.z = pos.z + activeTile.dZ;
+				activeTile.snapToLines( pos.x + activeTile.dX, pos.z + activeTile.dZ );
 			} // if pos
 		} // if activeTile
 	}

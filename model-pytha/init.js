@@ -23,7 +23,7 @@ var scene = new THREE.Scene();
 // perspective camera
 
 var camera = new THREE.PerspectiveCamera( 60, 1, 1, 1000 );
-	camera.position.set( 40, 80, 40 );
+	camera.position.set( 0, 100, 1 );
 	camera.lookAt( scene.position );
 
 
@@ -60,6 +60,11 @@ var subLight = new THREE.SpotLight( 'white', 0.3 );
 	scene.add( subLight );
 
 
+// coordinate systemLanguage
+
+var axesHelper = new THREE.AxesHelper( 100 );
+	scene.add( axesHelper );
+	
 // interactive mouse and touch controllers
 
 // 	the definition is extended by

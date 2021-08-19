@@ -1,6 +1,9 @@
 ﻿
 // create four tiles
 
+//
+// tile4
+//
 import {FRAME_SIZE, TILE_HEIGHT, FRAME_WIDTH, A, B, GROOVE_DENT, GROOVE_RADIUS
 /*FRAME_HEIGHT, FRAME_RADIUS, FRAME_DENT, INNER_RADIUS, B, ANGLE*/} from './config.js';
 import {scene} from './init.js';
@@ -13,11 +16,15 @@ export var activeTile;
 
 // create and return a new tile1
 
+var tileId = 0;
+
 export class Tile extends THREE.Group
 {
 	constructor()
 	{
 		super();
+
+		this.tileId = tileId++;
 		
 		const R = GROOVE_RADIUS;
 				
@@ -94,6 +101,7 @@ export class Tile extends THREE.Group
 
 	focus()
 	{
+		this.position.y = 1.2;
 		if( activeTile == this ) return;
 		
 		if( activeTile ) activeTile.blur();
@@ -103,6 +111,7 @@ export class Tile extends THREE.Group
 	
 	blur()
 	{
+		this.position.y = 0.1;
 		this.plateMesh.material.emissiveIntensity = 0.5;
 		activeTile = undefined;
 	} // Tile.focus
@@ -113,20 +122,38 @@ export class Tile extends THREE.Group
 	{
 		var snapPos = this.position,
 			bestDist = Infinity;
-			
-		for( var pos of gapPos )
+	
+		//var j=0;
+		for( var i=0; i<gapPos.length; i++ )
 		{
-			var d = this.position.distanceTo( pos );
+			var d = this.position.distanceTo( gapPos[i] );
 			if( d < bestDist )
 			{
 				bestDist = d;
-				snapPos = pos;
+				snapPos = gapPos[i];
+				//j=i;
 			}
 		}
 		
+		//console.log(j);		
 		this.position.copy( snapPos );
 		
 	} // Tile.snapToDot
+	
+	
+	// defines whether given position is available
+	snapToLines( newX, newZ )
+	{
+		this.position.x = newX;
+		this.position.z = newZ;
+
+		// if no snap data, exit
+		if( !this.snap ) return;
+		
+		// clamp to border
+		this.position.x = THREE.Math.clamp( this.position.x, this.snap.minX, this.snap.maxX );
+		this.position.z = THREE.Math.clamp( this.position.z, this.snap.minZ, this.snap.maxZ );
+	} // Tile.availablePosition
 	
 } // Tile			
 		
@@ -143,18 +170,51 @@ var x = A/2-FRAME_SIZE/2;
 			
 var tile1 = new Tile();
 	tile1.position.set( x, 0.1, -x );
+	tile1.snap = {
+					minX: Math.min( gapPos[0].x, gapPos[1].x, gapPos[5].x, gapPos[12].x ),
+					maxX: Math.max( gapPos[0].x, gapPos[1].x, gapPos[5].x, gapPos[12].x ),
+					minZ: Math.min( gapPos[0].z, gapPos[1].z, gapPos[5].z, gapPos[12].z ),
+					maxZ: Math.max( gapPos[0].z, gapPos[1].z, gapPos[5].z, gapPos[12].z ),
+				};
 			
 var tile2 = new Tile();
 	tile2.position.set( -x, 0.1, -x );
 	tile2.rotation.y = Math.PI/2;
+	tile2.snap = {
+					minX: Math.min( gapPos[0].x, gapPos[3].x, gapPos[4].x, gapPos[15].x ),
+					maxX: Math.max( gapPos[0].x, gapPos[3].x, gapPos[4].x, gapPos[15].x ),
+					minZ: Math.min( gapPos[0].z, gapPos[3].z, gapPos[4].z, gapPos[15].z ),
+					maxZ: Math.max( gapPos[0].z, gapPos[3].z, gapPos[4].z, gapPos[15].z ),
+				};
 			
 var tile3 = new Tile();
 	tile3.position.set( -x, 0.1, x );
 	tile3.rotation.y = 2*Math.PI/2;
+	tile3.snap = {
+					minX: Math.min( gapPos[2].x, gapPos[3].x, gapPos[7].x, gapPos[14].x ),
+					maxX: Math.max( gapPos[2].x, gapPos[3].x, gapPos[7].x, gapPos[14].x ),
+					minZ: Math.min( gapPos[2].z, gapPos[3].z, gapPos[7].z, gapPos[14].z ),
+					maxZ: Math.max( gapPos[2].z, gapPos[3].z, gapPos[7].z, gapPos[14].z ),
+				};
 			
 var tile4 = new Tile();
 	tile4.position.set( x, 0.1, x );
 	tile4.rotation.y = 3*Math.PI/2;
+	tile4.snap = {
+					minX: Math.min( gapPos[1].x, gapPos[2].x, gapPos[6].x, gapPos[13].x ),
+					maxX: Math.max( gapPos[1].x, gapPos[2].x, gapPos[6].x, gapPos[13].x ),
+					minZ: Math.min( gapPos[1].z, gapPos[2].z, gapPos[6].z, gapPos[13].z ),
+					maxZ: Math.max( gapPos[1].z, gapPos[2].z, gapPos[6].z, gapPos[13].z ),
+				};
+
+//	Tile 1			Tile 2			Tile 3			Tile 4
+//	[  ]	[  ]	[  ]	[  ]	[  ]	[  ]	[ 2]	[ 6]
+//      \				\				\				\
+//	[  ]	[  ]	[  ]	[  ]	[  ]	[  ]	[14] \	[10]
+//	[  ]	[  ]	[  ]	[  ]	[  ]	[  ]	[ 5]  \	[ 9]
+//         \			   \			   \			   \
+//	[  ]	[  ]	[  ]	[  ]	[  ]	[  ]	[ 1]	[13]
+//
 
 
 export var tiles = [tile1, tile2, tile3, tile4];
