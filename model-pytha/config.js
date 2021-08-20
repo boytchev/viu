@@ -20,16 +20,11 @@ export const TILE_HEIGHT = 1;
 
 // sides of the triangle tiles
 
-export const A =18; // use these values 10, 15, 20, 30
+export const A = 20; // from FRAME_SIZE/6 to FRAME_SIZE/2
 export const B = FRAME_SIZE-A;
 export const C = Math.sqrt(A*A+B*B);
 
 export const ANGLE = Math.atan2(A,B);
+export const MATRIX = new THREE.Matrix4().makeRotationY( -ANGLE );
 
 console.assert( A <= 0.50*FRAME_SIZE );
-
-
-
-
-
-

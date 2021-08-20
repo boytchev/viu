@@ -67,15 +67,6 @@ var x = z = FRAME_SIZE/2-A/2;
 
 var y = FRAME_HEIGHT/2-FRAME_DENT;
 
-/*var corner1 = new THREE.CylinderGeometry( GROOVE_RADIUS/6, GROOVE_RADIUS/6, GROOVE_DENT, 40 ).translate( x, y, x ),
-	corner2 = corner1.clone().rotateY( Math.PI/2 ),
-	corner3 = corner2.clone().rotateY( Math.PI/2 ),
-	corner4 = corner3.clone().rotateY( Math.PI/2 );
-*/
-
-//const axesHelper = new THREE.AxesHelper( 35 );
-//axesHelper.position.set(x-A*A*B/(A*A+B*B),0, x-A*B*B/(A*A+B*B));
-//scene.add( axesHelper );
 
 export var gapPos = [];
 

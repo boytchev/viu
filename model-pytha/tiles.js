@@ -4,14 +4,134 @@
 //
 // tile4
 //
-import {FRAME_SIZE, TILE_HEIGHT, FRAME_WIDTH, A, B, GROOVE_DENT, GROOVE_RADIUS
-/*FRAME_HEIGHT, FRAME_RADIUS, FRAME_DENT, INNER_RADIUS, B, ANGLE*/} from './config.js';
+import {FRAME_SIZE, TILE_HEIGHT, FRAME_WIDTH, A, B, GROOVE_DENT, GROOVE_RADIUS, MATRIX, ANGLE} from './config.js';
 import {scene} from './init.js';
 import {gapPos} from './frame.js';
 
 
+const COLOR_COLLISSIONS = false;
+
 export var activeTile;
 
+
+
+function intersecting( box1, box2 )
+{
+	var eps = 1;
+	
+	// touching boxes count as NON intersecting
+	return box1.max.x < box2.min.x+eps || box1.min.x > box2.max.x-eps ||
+		box1.max.z < box2.min.z+eps || box1.min.z > box2.max.z-eps ? false : true;
+
+}
+
+function trintersecting( trig1, trig3)
+{
+	return (trig1.containsPoint(trig3.a) ||
+			trig1.containsPoint(trig3.b) ||
+			trig1.containsPoint(trig3.c) ||
+			trig3.containsPoint(trig1.a) ||
+			trig3.containsPoint(trig1.b) ||
+			trig3.containsPoint(trig1.c));
+}
+
+function hasCollissions()
+{
+	if( COLOR_COLLISSIONS )
+	{
+		tile1.children[1].material.color = new THREE.Color( 'white' );
+		tile2.children[1].material.color = new THREE.Color( 'white' );
+		tile3.children[1].material.color = new THREE.Color( 'white' );
+		tile4.children[1].material.color = new THREE.Color( 'white' );
+	}
+	
+	var box1 = new THREE.Box3().setFromObject( tile1 ),
+		box2 = new THREE.Box3().setFromObject( tile2 ),
+		box3 = new THREE.Box3().setFromObject( tile3 ),
+		box4 = new THREE.Box3().setFromObject( tile4 );
+	
+	var eps = 0.2;
+	var trig1 = new THREE.Triangle(
+					new THREE.Vector3(box1.min.x+eps,0,box1.min.z+eps),
+					new THREE.Vector3(box1.min.x+eps,0,box1.max.z+eps),
+					new THREE.Vector3(box1.max.x+eps,0,box1.max.z+eps) ),
+		trig2 = new THREE.Triangle(
+					new THREE.Vector3(box2.max.x+eps,0,box2.min.z+eps),
+					new THREE.Vector3(box2.min.x+eps,0,box2.max.z+eps),
+					new THREE.Vector3(box2.max.x+eps,0,box2.max.z+eps) ),
+		trig3 = new THREE.Triangle(
+					new THREE.Vector3(box3.max.x+eps,0,box3.min.z+eps),
+					new THREE.Vector3(box3.min.x+eps,0,box3.min.z+eps),
+					new THREE.Vector3(box3.max.x+eps,0,box3.max.z+eps) ),
+		trig4 = new THREE.Triangle(
+					new THREE.Vector3(box4.max.x+eps,0,box4.min.z+eps),
+					new THREE.Vector3(box4.min.x+eps,0,box4.min.z+eps),
+					new THREE.Vector3(box4.min.x+eps,0,box4.max.z+eps) );
+
+
+	if( intersecting(box1,box2) && trintersecting(trig1,trig2) )
+	{
+		if( COLOR_COLLISSIONS )
+		{
+			tile1.children[1].material.color = new THREE.Color( 'crimson' );
+			tile2.children[1].material.color = new THREE.Color( 'crimson' );
+		}
+		return true;
+	}
+	
+	if( intersecting(box1,box3) && trintersecting(trig1,trig3) )
+	{
+		if( COLOR_COLLISSIONS )
+		{
+			tile1.children[1].material.color = new THREE.Color( 'crimson' );
+			tile3.children[1].material.color = new THREE.Color( 'crimson' );
+		}
+		return true;
+	}
+	
+	if( intersecting(box1,box4) && trintersecting(trig1,trig4) )
+	{
+		if( COLOR_COLLISSIONS )
+		{
+			tile1.children[1].material.color = new THREE.Color( 'crimson' );
+			tile4.children[1].material.color = new THREE.Color( 'crimson' );
+		}
+		return true;
+	}
+	
+	if( intersecting(box2,box3) && trintersecting(trig2,trig3) )
+	{
+		if( COLOR_COLLISSIONS )
+		{
+			tile2.children[1].material.color = new THREE.Color( 'crimson' );
+			tile3.children[1].material.color = new THREE.Color( 'crimson' );
+		}
+		return true;
+	}
+	
+	if( intersecting(box2,box4) && trintersecting(trig2,trig4) )
+	{
+		if( COLOR_COLLISSIONS )
+		{
+			tile2.children[1].material.color = new THREE.Color( 'crimson' );
+			tile4.children[1].material.color = new THREE.Color( 'crimson' );
+		}
+		return true;
+	}
+	
+	if( intersecting(box3,box4) && trintersecting(trig3,trig4) )
+	{
+		if( COLOR_COLLISSIONS )
+		{
+			tile3.children[1].material.color = new THREE.Color( 'crimson' );
+			tile4.children[1].material.color = new THREE.Color( 'crimson' );
+		}
+		return true;
+	}
+
+	return false;
+}
+		
 
 
 // create and return a new tile1
@@ -120,23 +240,26 @@ export class Tile extends THREE.Group
 	// snaps the tile to the nearest groove dot
 	snapToDot()
 	{
-		var snapPos = this.position,
+		var origPos = this.position.clone(),
 			bestDist = Infinity;
 	
-		//var j=0;
+		var j = -1;
+		
 		for( var i=0; i<gapPos.length; i++ )
 		{
-			var d = this.position.distanceTo( gapPos[i] );
+			var d = origPos.distanceTo( gapPos[i] );
 			if( d < bestDist )
 			{
 				bestDist = d;
-				snapPos = gapPos[i];
-				//j=i;
+				j = i;
 			}
 		}
 		
-		//console.log(j);		
-		this.position.copy( snapPos );
+		this.position.copy( gapPos[j] );
+		if( !hasCollissions() )
+			this.gapPosIndex = j;
+		
+		this.position.copy( gapPos[this.gapPosIndex] );
 		
 	} // Tile.snapToDot
 	
@@ -156,7 +279,26 @@ export class Tile extends THREE.Group
 	} // Tile.availablePosition
 	
 } // Tile			
-		
+
+
+function EchoGeometry()
+{
+	const R = GROOVE_RADIUS;
+			
+	var shape = new THREE.Shape();
+		shape.moveTo( A/2, 0 );
+		shape.lineTo( R, 0 );
+		shape.quadraticCurveTo( 0, 0, 0, R );
+		shape.lineTo( 0, B-R );
+		shape.quadraticCurveTo( 0, B, R/B*A, B-R );
+		shape.lineTo( A, 0 );
+				
+	return new THREE.ExtrudeGeometry( shape, {
+			steps: 1,
+			depth: TILE_HEIGHT,
+			bevelEnabled: false,
+		}).rotateX(-Math.PI/2).translate(-A/2, 0, A/2 ).rotateY( -ANGLE );
+}
 
 // blur a focused tile (if any)
 export function blur()
@@ -170,6 +312,7 @@ var x = A/2-FRAME_SIZE/2;
 			
 var tile1 = new Tile();
 	tile1.position.set( x, 0.1, -x );
+	tile1.name = 'tile1';
 	tile1.snap = {
 					minX: Math.min( gapPos[0].x, gapPos[1].x, gapPos[5].x, gapPos[12].x ),
 					maxX: Math.max( gapPos[0].x, gapPos[1].x, gapPos[5].x, gapPos[12].x ),
@@ -180,6 +323,7 @@ var tile1 = new Tile();
 var tile2 = new Tile();
 	tile2.position.set( -x, 0.1, -x );
 	tile2.rotation.y = Math.PI/2;
+	tile2.name = 'tile2';
 	tile2.snap = {
 					minX: Math.min( gapPos[0].x, gapPos[3].x, gapPos[4].x, gapPos[15].x ),
 					maxX: Math.max( gapPos[0].x, gapPos[3].x, gapPos[4].x, gapPos[15].x ),
@@ -190,6 +334,7 @@ var tile2 = new Tile();
 var tile3 = new Tile();
 	tile3.position.set( -x, 0.1, x );
 	tile3.rotation.y = 2*Math.PI/2;
+	tile3.name = 'tile3';
 	tile3.snap = {
 					minX: Math.min( gapPos[2].x, gapPos[3].x, gapPos[7].x, gapPos[14].x ),
 					maxX: Math.max( gapPos[2].x, gapPos[3].x, gapPos[7].x, gapPos[14].x ),
@@ -200,6 +345,7 @@ var tile3 = new Tile();
 var tile4 = new Tile();
 	tile4.position.set( x, 0.1, x );
 	tile4.rotation.y = 3*Math.PI/2;
+	tile4.name = 'tile4';
 	tile4.snap = {
 					minX: Math.min( gapPos[1].x, gapPos[2].x, gapPos[6].x, gapPos[13].x ),
 					maxX: Math.max( gapPos[1].x, gapPos[2].x, gapPos[6].x, gapPos[13].x ),
@@ -207,16 +353,17 @@ var tile4 = new Tile();
 					maxZ: Math.max( gapPos[1].z, gapPos[2].z, gapPos[6].z, gapPos[13].z ),
 				};
 
-//	Tile 1			Tile 2			Tile 3			Tile 4
-//	[  ]	[  ]	[  ]	[  ]	[  ]	[  ]	[ 2]	[ 6]
-//      \				\				\				\
-//	[  ]	[  ]	[  ]	[  ]	[  ]	[  ]	[14] \	[10]
-//	[  ]	[  ]	[  ]	[  ]	[  ]	[  ]	[ 5]  \	[ 9]
-//         \			   \			   \			   \
-//	[  ]	[  ]	[  ]	[  ]	[  ]	[  ]	[ 1]	[13]
+//	[ 2]	[ 6][15]	[ 3]
 //
+//	[14]	[10][11]	[ 7]
+//	[ 5]	[ 9][ 8]	[12]
+//
+//	[ 1]	[13][ 4]	[ 0]
 
-
+// impossible positions
+//
+// tile1 & tile2
+//	
 export var tiles = [tile1, tile2, tile3, tile4];
 
 scene.add( ...tiles );

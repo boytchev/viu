@@ -23,7 +23,7 @@ var scene = new THREE.Scene();
 // perspective camera
 
 var camera = new THREE.PerspectiveCamera( 60, 1, 1, 1000 );
-	camera.position.set( 0, 100, 1 );
+	camera.position.set( 30, 60, 60 );
 	camera.lookAt( scene.position );
 
 
@@ -60,10 +60,10 @@ var subLight = new THREE.SpotLight( 'white', 0.3 );
 	scene.add( subLight );
 
 
-// coordinate systemLanguage
-
-var axesHelper = new THREE.AxesHelper( 100 );
-	scene.add( axesHelper );
+// coordinate system
+//
+//var axesHelper = new THREE.AxesHelper( 100 );
+//	scene.add( axesHelper );
 	
 // interactive mouse and touch controllers
 
@@ -73,11 +73,11 @@ var axesHelper = new THREE.AxesHelper( 100 );
 //			}; // added by P. Boytchev
 
 var controls = new THREE.OrbitControls( camera, renderer.domElement );
-	controls.maxPolarAngle = Math.PI * 0.3;
+	controls.maxPolarAngle = Math.PI * 0.4;
 	controls.minDistance = 20;
-	controls.maxDistance = 100;
-	controls.enableDamping = true;
-	controls.dampingFactor = 0.25;
+	controls.maxDistance = 130;
+	controls.enableDamping = !true;
+	controls.dampingFactor = 0.5;
 	controls.rotateSpeed = 0.3;
 	controls.panSpeed = 0.7;
 	controls.screenSpacePanning = false;
@@ -102,7 +102,7 @@ function onWindowResize( event )
 
 function animate( time )
 {
-	controls.update();
+	controls.update( time );
 	renderer.render( scene, camera );
 }
 
