@@ -23,149 +23,145 @@
 			import {sensorPlane, sensorPoint} from './frame.js';	// frame of the model
 			import {Tile, tiles, blur, activeTile} from './tiles.js';	// four tiles
 			
-// manage interactivity events
 
-var mouse = new THREE.Vector2(), // current mouse or touch position
-	raycaster = new THREE.Raycaster(),
-	dragging = false;
+			// manage interactivity events
 
+			var mouse = new THREE.Vector2(), // current mouse or touch position
+				raycaster = new THREE.Raycaster(),
+				dragging = false;
 
+			document.addEventListener('mousedown', onMouseDown);
+			document.addEventListener('mouseup', onMouseUp);
+			document.addEventListener('mousemove', onMouseMove);
 
-
-document.addEventListener('mousedown', onMouseDown);
-document.addEventListener('mouseup', onMouseUp);
-document.addEventListener('mousemove', onMouseMove);
-
-document.addEventListener('touchstart', onMouseDown);
-document.addEventListener('touchend', onMouseUp);
-document.addEventListener('touchcancel', onMouseUp);
-document.addEventListener('touchmove', onMouseMove);
+			document.addEventListener('touchstart', onMouseDown);
+			document.addEventListener('touchend', onMouseUp);
+			document.addEventListener('touchcancel', onMouseUp);
+			document.addEventListener('touchmove', onMouseMove);
 
 
-function pointedTile()
-{
-	raycaster.setFromCamera( mouse, camera );
-
-	var intersects = raycaster.intersectObjects( tiles, true);
-	if( intersects.length )
-	{
-		var object = intersects[0].object;
-		while( !object.isTile ) object = object.parent;
-		
-		return object;
-	}
-	else
-		return null;
-}
-
-
-function pointedLocation()
-{
-	raycaster.setFromCamera( mouse, camera );
-
-	var intersects = raycaster.intersectObject( sensorPlane );
-
-	if( intersects.length )
-	{
-		sensorPoint.position.copy( intersects[0].point );
-		return intersects[0].point;
-	}
-	return null;
-}
-
-
-function onMouseDown(event)
-{
-	dragging = true;
-	
-//	controls.enabled = true;
-	userInput(event);
-	
-	var tile = pointedTile();
-	if( tile )
-	{
-		controls.enabled = false;
-		tile.focus();
-		
-		var pos = pointedLocation();
-		if( pos )
-		{
-			activeTile.dX = activeTile.position.x - pos.x;
-			activeTile.dZ = activeTile.position.z - pos.z;
-			activeTile.x = activeTile.position.x;
-			activeTile.z = activeTile.position.z;
-		}
-	}
-	else
-	{
-	}
-}
-
-
-
-function onMouseUp(event)
-{
-	if( activeTile ) activeTile.snapToDot();
-	controls.resetState();
-	controls.enabled = true;
-	dragging = false;
-}
-
-
-function onMouseMove(event)
-{
-	userInput(event);
-	
-
-
-	if( dragging )
-	{
-		// dragging scene or tile
-		if( activeTile )
-		{
-			var pos = pointedLocation();
-			if( pos )
+			function pointedTile()
 			{
-				activeTile.snapToLines( pos.x + activeTile.dX, pos.z + activeTile.dZ );
-			} // if pos
-		} // if activeTile
-	}
-	else
-	{
-		// moving the cursor
-		userInput(event);
-		
-		var tile = pointedTile();
-		if( tile )
-			tile.focus();
-		else
-			blur();
-	}
-}
+				raycaster.setFromCamera( mouse, camera );
+
+				var intersects = raycaster.intersectObjects( tiles, true);
+				if( intersects.length )
+				{
+					var object = intersects[0].object;
+					while( !object.isTile ) object = object.parent;
+					
+					return object;
+				}
+				else
+					return null;
+			}
 
 
-function userInput(event)
-{
-	if (event instanceof MouseEvent)
-	{
-		event.preventDefault();
+			function pointedLocation()
+			{
+				raycaster.setFromCamera( mouse, camera );
 
-//		mouseInterface = true;
-//		mouseButton = event.buttons || 0x1;
+				var intersects = raycaster.intersectObject( sensorPlane );
 
-		mouse.x = event.clientX / window.innerWidth * 2 - 1;
-		mouse.y = -event.clientY / window.innerHeight * 2 + 1;
-	}
+				if( intersects.length )
+				{
+					sensorPoint.position.copy( intersects[0].point );
+					return intersects[0].point;
+				}
+				return null;
+			}
 
-	if (window.TouchEvent && event instanceof TouchEvent && event.touches.length == 1)
-	{
-//		mouseButton = 0x1;
 
-//		touchInterface = true;
-		mouse.x = event.touches[0].clientX / window.innerWidth * 2 - 1;
-		mouse.y = -event.touches[0].clientY / window.innerHeight * 2 + 1;
-	}
-}
+			function onMouseDown(event)
+			{
+				dragging = true;
+				
+			//	controls.enabled = true;
+				userInput(event);
+				
+				var tile = pointedTile();
+				if( tile )
+				{
+					controls.enabled = false;
+					tile.focus();
+					
+					var pos = pointedLocation();
+					if( pos )
+					{
+						activeTile.dX = activeTile.position.x - pos.x;
+						activeTile.dZ = activeTile.position.z - pos.z;
+						activeTile.x = activeTile.position.x;
+						activeTile.z = activeTile.position.z;
+					}
+				}
+				else
+				{
+				}
+			}
+
+
+
+			function onMouseUp(event)
+			{
+				if( activeTile ) activeTile.snapToDot();
+				controls.resetState();
+				controls.enabled = true;
+				dragging = false;
+			}
+
+
+			function onMouseMove(event)
+			{
+				userInput(event);
+				
+				if( dragging )
+				{
+					// dragging scene or tile
+					if( activeTile )
+					{
+						var pos = pointedLocation();
+						if( pos )
+						{
+							activeTile.snapToLines( pos.x + activeTile.dX, pos.z + activeTile.dZ );
+						} // if pos
+					} // if activeTile
+				}
+				else
+				{
+					// moving the cursor
+					userInput(event);
+					
+					var tile = pointedTile();
+					if( tile )
+						tile.focus( false );
+					else
+						blur();
+				}
+			}
+
+
+			function userInput(event)
+			{
+				if (event instanceof MouseEvent)
+				{
+					event.preventDefault();
+
+			//		mouseInterface = true;
+			//		mouseButton = event.buttons || 0x1;
+
+					mouse.x = event.clientX / window.innerWidth * 2 - 1;
+					mouse.y = -event.clientY / window.innerHeight * 2 + 1;
+				}
+
+				if (window.TouchEvent && event instanceof TouchEvent && event.touches.length == 1)
+				{
+			//		mouseButton = 0x1;
+
+			//		touchInterface = true;
+					mouse.x = event.touches[0].clientX / window.innerWidth * 2 - 1;
+					mouse.y = -event.touches[0].clientY / window.innerHeight * 2 + 1;
+				}
+			}
 
 
 		</script>

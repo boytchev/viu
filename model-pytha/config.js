@@ -20,7 +20,7 @@ export const TILE_HEIGHT = 1;
 
 // sides of the triangle tiles
 
-export const A = 20; // from FRAME_SIZE/6 to FRAME_SIZE/2
+export const A = 15; // from FRAME_SIZE/6 to FRAME_SIZE/2
 export const B = FRAME_SIZE-A;
 export const C = Math.sqrt(A*A+B*B);
 

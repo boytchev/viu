@@ -171,7 +171,7 @@ export class Tile extends THREE.Group
 				sheen: new THREE.Color('crimson'),
 				transmission: 1,
 				thickness: 0,
-				ior: 0,
+				ior: 2,
 				transparent: true,
 				opacity: 1,
 			});
@@ -183,7 +183,7 @@ export class Tile extends THREE.Group
 					
 		this.lineMesh = new THREE.LineSegments( 
 				new THREE.EdgesGeometry( geometry, 90 ),
-				new THREE.LineBasicMaterial( { color: 'navy', transparent: true, opacity: 0.35 } ) );
+				new THREE.LineBasicMaterial( { color: 'white', transparent: true, opacity: 0.35 } ) );
 		this.plateMesh.add( this.lineMesh );
 
 		var shape = new THREE.Shape();
@@ -219,9 +219,9 @@ export class Tile extends THREE.Group
 	} // Tile.constructor
 
 
-	focus()
+	focus( raise = true )
 	{
-		this.position.y = 1.2;
+		this.position.y = raise?1.2:0.1;
 		if( activeTile == this ) return;
 		
 		if( activeTile ) activeTile.blur();
@@ -311,7 +311,8 @@ export function blur()
 var x = A/2-FRAME_SIZE/2;
 			
 var tile1 = new Tile();
-	tile1.position.set( x, 0.1, -x );
+	tile1.gapPosIndex = 1;
+	tile1.position.copy( gapPos[1] );
 	tile1.name = 'tile1';
 	tile1.snap = {
 					minX: Math.min( gapPos[0].x, gapPos[1].x, gapPos[5].x, gapPos[12].x ),
@@ -321,7 +322,8 @@ var tile1 = new Tile();
 				};
 			
 var tile2 = new Tile();
-	tile2.position.set( -x, 0.1, -x );
+	tile2.gapPosIndex = 0;
+	tile2.position.copy( gapPos[0] );
 	tile2.rotation.y = Math.PI/2;
 	tile2.name = 'tile2';
 	tile2.snap = {
@@ -332,7 +334,8 @@ var tile2 = new Tile();
 				};
 			
 var tile3 = new Tile();
-	tile3.position.set( -x, 0.1, x );
+	tile3.gapPosIndex = 3;
+	tile3.position.copy( gapPos[3] );
 	tile3.rotation.y = 2*Math.PI/2;
 	tile3.name = 'tile3';
 	tile3.snap = {
@@ -343,7 +346,8 @@ var tile3 = new Tile();
 				};
 			
 var tile4 = new Tile();
-	tile4.position.set( x, 0.1, x );
+	tile4.gapPosIndex = 2;
+	tile4.position.copy( gapPos[2] );
 	tile4.rotation.y = 3*Math.PI/2;
 	tile4.name = 'tile4';
 	tile4.snap = {
