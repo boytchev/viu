@@ -4,14 +4,44 @@
 //
 // tile4
 //
-import {FRAME_SIZE, TILE_HEIGHT, FRAME_WIDTH, A, B, GROOVE_DENT, GROOVE_RADIUS, MATRIX, ANGLE} from './config.js';
-import {scene} from './init.js';
+import {FRAME_SIZE, TILE_HEIGHT, FRAME_WIDTH, A, B, GROOVE_DENT, GROOVE_RADIUS, MATRIX, ANGLE, TILE_RADIUS} from './config.js';
+import {scene, MAX_ANISOTROPY} from './init.js';
 import {gapPos} from './frame.js';
 
 
 const COLOR_COLLISSIONS = false;
 
 export var activeTile;
+
+
+// load textures
+
+var mapA = new THREE.TextureLoader().load( '../textures/pytha-a.png' );
+	mapA.anisotropy = MAX_ANISOTROPY;
+
+var bumpA = new THREE.TextureLoader().load( '../textures/pytha-a-bump.png' );
+	bumpA.anisotropy = MAX_ANISOTROPY;
+
+var alphaA = new THREE.TextureLoader().load( '../textures/pytha-a-alpha.png' );
+	alphaA.anisotropy = MAX_ANISOTROPY;
+
+var mapB = new THREE.TextureLoader().load( '../textures/pytha-b.png' );
+	mapB.anisotropy = MAX_ANISOTROPY;
+
+var bumpB = new THREE.TextureLoader().load( '../textures/pytha-b-bump.png' );
+	bumpB.anisotropy = MAX_ANISOTROPY;
+
+var alphaB = new THREE.TextureLoader().load( '../textures/pytha-b-alpha.png' );
+	alphaB.anisotropy = MAX_ANISOTROPY;
+
+var mapC = new THREE.TextureLoader().load( '../textures/pytha-c.png' );
+	mapC.anisotropy = MAX_ANISOTROPY;
+
+var bumpC = new THREE.TextureLoader().load( '../textures/pytha-c-bump.png' );
+	bumpC.anisotropy = MAX_ANISOTROPY;
+
+var alphaC = new THREE.TextureLoader().load( '../textures/pytha-c-alpha.png' );
+	alphaC.anisotropy = MAX_ANISOTROPY;
 
 
 
@@ -146,14 +176,14 @@ export class Tile extends THREE.Group
 
 		this.tileId = tileId++;
 		
-		const R = GROOVE_RADIUS;
+		const R = TILE_RADIUS;
 				
 		var shape = new THREE.Shape();
 			shape.moveTo( A/2, 0 );
 			shape.lineTo( R, 0 );
 			shape.quadraticCurveTo( 0, 0, 0, R );
-			shape.lineTo( 0, B-R );
-			shape.quadraticCurveTo( 0, B, R/B*A, B-R );
+			shape.lineTo( 0, B-2*R );
+			shape.quadraticCurveTo( 0, B, 2*R/B*A, B-2*R );
 			shape.lineTo( A, 0 );
 					
 		var geometry = new THREE.ExtrudeGeometry( shape, {
@@ -170,8 +200,8 @@ export class Tile extends THREE.Group
 				clearcoat: 1,
 				sheen: new THREE.Color('crimson'),
 				transmission: 1,
-				thickness: 0,
-				ior: 2,
+				thickness: 1,
+				ior: 1,
 				transparent: true,
 				opacity: 1,
 			});
@@ -181,6 +211,64 @@ export class Tile extends THREE.Group
 		this.plateMesh.position.set( -A/2, 0, A/2 );
 		this.plateMesh.castShadow = true;
 					
+		var scriptGeometry = new THREE.PlaneGeometry( 1.5*2, 2, 50, 50 ).rotateX( -Math.PI/2 );
+		
+		this.scriptA = new THREE.Mesh(
+			scriptGeometry,
+			new THREE.MeshPhysicalMaterial({
+				color: 'black',
+				map: mapA,
+				displacementMap: bumpA,
+				displacementScale: 0.5,
+				transparent: true,
+				alphaMap: alphaA,
+				polygonOffset: true,
+				polygonOffsetFactor: -2,
+				polygonOffsetUnits: -2,
+				
+			})
+		);
+		this.scriptA.position.set(0, TILE_HEIGHT, A/2-2);
+		this.add( this.scriptA );
+		
+		this.scriptB = new THREE.Mesh(
+			scriptGeometry,
+			new THREE.MeshPhysicalMaterial({
+				color: 'black',
+				map: mapB,
+				displacementMap: bumpB,
+				displacementScale: 0.5,
+				transparent: true,
+				alphaMap: alphaB,
+				polygonOffset: true,
+				polygonOffsetFactor: -2,
+				polygonOffsetUnits: -2,
+				
+			})
+		);
+		this.scriptB.position.set(-A/2+2, TILE_HEIGHT, -B/2+A/2 );
+		this.scriptB.rotation.y = -Math.PI/2;
+		this.add( this.scriptB );
+
+		this.scriptC = new THREE.Mesh(
+			scriptGeometry,
+			new THREE.MeshPhysicalMaterial({
+				color: 'black',
+				map: mapC,
+				displacementMap: bumpC,
+				displacementScale: 0.5,
+				transparent: true,
+				alphaMap: alphaC,
+				polygonOffset: true,
+				polygonOffsetFactor: -2,
+				polygonOffsetUnits: -2,
+				
+			})
+		);
+		this.scriptC.position.set(-1, TILE_HEIGHT, -B/2+A/2 );
+		this.scriptC.rotation.y = ANGLE+Math.PI/2;
+		this.add( this.scriptC );
+		
 		this.lineMesh = new THREE.LineSegments( 
 				new THREE.EdgesGeometry( geometry, 90 ),
 				new THREE.LineBasicMaterial( { color: 'white', transparent: true, opacity: 0.35 } ) );
@@ -221,7 +309,7 @@ export class Tile extends THREE.Group
 
 	focus( raise = true )
 	{
-		this.position.y = raise?1.2:0.1;
+		this.position.y = raise?0.15:0.1;
 		if( activeTile == this ) return;
 		
 		if( activeTile ) activeTile.blur();
