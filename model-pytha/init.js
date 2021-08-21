@@ -102,7 +102,7 @@ function onWindowResize( event )
 
 function animate( time )
 {
-	controls.update( time );
+	//controls.update( time );
 	renderer.render( scene, camera );
 }
 
