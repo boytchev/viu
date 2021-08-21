@@ -1,7 +1,7 @@
 ﻿
 // create the static frame of the model
 
-import {FRAME_HEIGHT, FRAME_SIZE, FRAME_RADIUS, FRAME_WIDTH, FRAME_DENT, INNER_RADIUS, A, B, GROOVE_DENT, GROOVE_RADIUS, ANGLE} from './config.js';
+import {FRAME_HEIGHT, FRAME_SIZE, FRAME_RADIUS, FRAME_WIDTH, FRAME_DENT, INNER_RADIUS, A, B, GROOVE_DENT, GROOVE_RADIUS, ANGLE, TILE_HEIGHT} from './config.js';
 import {MAX_ANISOTROPY, scene} from './init.js';
 
 
@@ -17,12 +17,12 @@ var texture = new THREE.TextureLoader().load( '../textures/concrete.jpg' );
 
 // 1.1: two crossed bars
 				
-var base1 = new THREE.BoxGeometry( FRAME_SIZE+2*FRAME_WIDTH, FRAME_HEIGHT, FRAME_SIZE ),
+var base1 = new THREE.BoxGeometry( FRAME_SIZE+2*FRAME_WIDTH, FRAME_HEIGHT, FRAME_SIZE+2*FRAME_WIDTH-2*FRAME_RADIUS ),
 	base2 = base1.clone().rotateY( Math.PI/2 );
 
 // 1.2: cylinders at the corners
 
-var x = FRAME_SIZE/2+FRAME_WIDTH-FRAME_RADIUS+0.04;
+var x = FRAME_SIZE/2+FRAME_WIDTH-FRAME_RADIUS;
 				
 var corner1 = new THREE.CylinderGeometry( FRAME_RADIUS, FRAME_RADIUS, FRAME_HEIGHT, 60 ).translate( x, 0, x ),
 	corner2 = corner1.clone().rotateY( Math.PI/2 ),
@@ -43,7 +43,8 @@ var csg = CSG.union( [base1, base2, corner1, corner2, corner3, corner4] );
 var y = FRAME_HEIGHT/2-FRAME_DENT/2; // vertical offset
 
 var base1 = new THREE.BoxGeometry( FRAME_SIZE-2*INNER_RADIUS, FRAME_DENT, FRAME_SIZE ).translate( 0, y, 0 ),
-	base2 = base1.clone().rotateY( Math.PI/2 );
+	base2 = base1.clone().rotateY( Math.PI/2 ),
+	base3 = new THREE.BoxGeometry( FRAME_SIZE, TILE_HEIGHT, FRAME_SIZE ).translate( 0, y-TILE_HEIGHT/2, 0 );
 	
 // 2.2: cylinders at the corners
 					
@@ -56,7 +57,7 @@ var corner1 = new THREE.CylinderGeometry( INNER_RADIUS, INNER_RADIUS, FRAME_DENT
 	
 // 2.3: cut off from rounded platform
 	
-csg = CSG.subtract( [csg, base1, base2, corner1, corner2, corner3, corner4 ]);
+csg = CSG.subtract( [csg, base1, base2, base3, corner1, corner2, corner3, corner4 ]);
 
 				
 // STEP 3. CUT THE GROOVES

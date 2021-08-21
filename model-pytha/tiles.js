@@ -55,6 +55,29 @@ function intersecting( box1, box2 )
 
 }
 
+function crossing( box1, box2 )
+{
+	var e = -1;
+	
+	// touching boxes count as NON intersecting
+	
+	//z+  +---+
+	//    |1  |
+	//    + +-+----+
+	//    | | |   2|  
+	//    | +-+----+
+	//z+  +---+
+    //  x-         x+
+
+	if( box1.max.z+e>box2.max.z && box1.min.z-e<box2.min.z && box2.min.x-e<box1.max.x && box2.max.x+e>box1.max.x ) return true;
+	if( box1.max.x+e>box2.max.x && box1.min.x-e<box2.min.x && box2.min.z-e<box1.max.z && box2.max.z+e>box1.max.z ) return true;
+	
+	if( box2.max.z+e>box1.max.z && box2.min.z-e<box1.min.z && box1.min.x-e<box2.max.x && box1.max.x+e>box2.max.x ) return true;
+	if( box2.max.x+e>box1.max.x && box2.min.x-e<box1.min.x && box1.min.z-e<box2.max.z && box1.max.z+e>box2.max.z ) return true;
+	
+	return false;
+}
+
 function trintersecting( trig1, trig3)
 {
 	return (trig1.containsPoint(trig3.a) ||
@@ -99,7 +122,7 @@ function hasCollissions()
 					new THREE.Vector3(box4.min.x+eps,0,box4.max.z+eps) );
 
 
-	if( intersecting(box1,box2) && trintersecting(trig1,trig2) )
+	if( crossing(box1,box2) || intersecting(box1,box2) && trintersecting(trig1,trig2))
 	{
 		if( COLOR_COLLISSIONS )
 		{
@@ -109,7 +132,7 @@ function hasCollissions()
 		return true;
 	}
 	
-	if( intersecting(box1,box3) && trintersecting(trig1,trig3) )
+	if( crossing(box1,box3) || intersecting(box1,box3) && trintersecting(trig1,trig3) )
 	{
 		if( COLOR_COLLISSIONS )
 		{
@@ -119,7 +142,7 @@ function hasCollissions()
 		return true;
 	}
 	
-	if( intersecting(box1,box4) && trintersecting(trig1,trig4) )
+	if( crossing(box1,box4) || intersecting(box1,box4) && trintersecting(trig1,trig4) )
 	{
 		if( COLOR_COLLISSIONS )
 		{
@@ -129,7 +152,7 @@ function hasCollissions()
 		return true;
 	}
 	
-	if( intersecting(box2,box3) && trintersecting(trig2,trig3) )
+	if( crossing(box2,box3) || intersecting(box2,box3) && trintersecting(trig2,trig3) )
 	{
 		if( COLOR_COLLISSIONS )
 		{
@@ -139,7 +162,7 @@ function hasCollissions()
 		return true;
 	}
 	
-	if( intersecting(box2,box4) && trintersecting(trig2,trig4) )
+	if( crossing(box2,box4) || intersecting(box2,box4) && trintersecting(trig2,trig4) )
 	{
 		if( COLOR_COLLISSIONS )
 		{
@@ -149,7 +172,7 @@ function hasCollissions()
 		return true;
 	}
 	
-	if( intersecting(box3,box4) && trintersecting(trig3,trig4) )
+	if( crossing(box3,box4) || intersecting(box3,box4) && trintersecting(trig3,trig4) )
 	{
 		if( COLOR_COLLISSIONS )
 		{
@@ -246,7 +269,7 @@ export class Tile extends THREE.Group
 				
 			})
 		);
-		this.scriptB.position.set(-A/2+2, TILE_HEIGHT, -B/2+A/2 );
+		this.scriptB.position.set(-A/2+2, TILE_HEIGHT, -B/3+A/2 );
 		this.scriptB.rotation.y = -Math.PI/2;
 		this.add( this.scriptB );
 
@@ -265,7 +288,7 @@ export class Tile extends THREE.Group
 				
 			})
 		);
-		this.scriptC.position.set(-1, TILE_HEIGHT, -B/2+A/2 );
+		this.scriptC.position.set(-1, TILE_HEIGHT, -B/2+A/2+1 );
 		this.scriptC.rotation.y = ANGLE+Math.PI/2;
 		this.add( this.scriptC );
 		
