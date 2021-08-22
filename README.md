@@ -32,5 +32,19 @@ The right trangle shape is configurable. Here are three versions of the same mod
 [<img src="model-pytha/snapshot4.jpg" width="150">](https://boytchev.github.io/viu/model-pytha/index.html?a=20)
 [<img src="model-pytha/snapshot5.jpg" width="150">](https://boytchev.github.io/viu/model-pytha/index.html?a=30)
 
-The model can be used
-to demonstrate other geometrical relations, like areas of parallelograms.
+Apart from demonstrating a visual and tactile proof of the Pythagorean theorem,
+the application can be used to demonstrate or explore:
+
+- Area of parallelograms;
+- Garden of Edem puzzles;
+- Similar right triangles;    
+- Second degree equations.
+
+
+
+# Papers
+
+The models &ndash; design and applications are discussed in several papers and presented in several conferences:
+
+- "Designing 3D-printer Models for Students with Vision Impairment or Low Vision" (pending review).
+- "Virtual Prototypes of 3D Models for Students with Visual Impairment or Low Vision" (under construction).
