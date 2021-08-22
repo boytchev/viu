@@ -1,2 +1,4 @@
 theme: jekyll-theme-tactile
-show_downloads: true
+show_downloads: false
+twitter:
+  username: boytchev
