@@ -19,9 +19,13 @@ export const TILE_HEIGHT = 1;
 export const TILE_RADIUS = 1;
 
 
-// sides of the triangle tiles
+var urlParams = new URLSearchParams( window.location.search ),
+	minA = FRAME_SIZE/12,
+	maxA = FRAME_SIZE/2,
+	defA = FRAME_SIZE/3; // default A
 
-export const A = 20; // from FRAME_SIZE/6 to FRAME_SIZE/2
+// sides of the triangle tiles
+export const A = Math.floor(Math.max(minA,Math.min(maxA,parseInt(urlParams.get('a'))||defA)));
 export const B = FRAME_SIZE-A;
 export const C = Math.sqrt(A*A+B*B);
 
