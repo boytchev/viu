@@ -36,7 +36,7 @@ Apart from demonstrating a visual and tactile proof of the Pythagorean theorem,
 the application can be used to demonstrate or explore:
 
 - Area of parallelograms;
-- Garden of Edem puzzles;
+- Garden of Eden puzzles;
 - Similar right triangles;    
 - Second degree equations.
 
