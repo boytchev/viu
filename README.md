@@ -48,3 +48,5 @@ The models &ndash; design and applications are discussed in several papers and p
 
 - "Designing 3D-printer Models for Students with Vision Impairment or Low Vision" (pending review).
 - "Virtual Prototypes of 3D Models for Students with Visual Impairment or Low Vision" (under construction).
+
+<p class="view"><a href="https://github.com/boytchev/viu">View on GitHub</a><br><a href="https://twitter.com/boytchev">View My Twitter Profile </a></p>
