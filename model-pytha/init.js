@@ -24,7 +24,7 @@ var scene = new THREE.Scene();
 
 var camera = new THREE.PerspectiveCamera( 60, 1, 1, 1000 );
 	camera.position.set( 30, 60, 60 );
-	camera.position.set( 0, 180, 0 );
+	//camera.position.set( 0, 180, 0 );
 	camera.lookAt( scene.position );
 
 

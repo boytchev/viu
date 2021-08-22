@@ -27,10 +27,10 @@ in a way to recreate the proof of the theorem.
 
 The right trangle shape is configurable. Here are three versions of the same model:
 
-[<img src="model-pytha/snapshot2.jpg" width="100">](https://boytchev.github.io/viu/model-pytha/index.html?a=10)
-[<img src="model-pytha/snapshot3.jpg" width="100">](https://boytchev.github.io/viu/model-pytha/index.html?a=15)
-[<img src="model-pytha/snapshot4.jpg" width="100">](https://boytchev.github.io/viu/model-pytha/index.html?a=20)
-[<img src="model-pytha/snapshot5.jpg" width="100">](https://boytchev.github.io/viu/model-pytha/index.html?a=30)
+[<img src="model-pytha/snapshot2.jpg" width="150">](https://boytchev.github.io/viu/model-pytha/index.html?a=10)
+[<img src="model-pytha/snapshot3.jpg" width="150">](https://boytchev.github.io/viu/model-pytha/index.html?a=15)
+[<img src="model-pytha/snapshot4.jpg" width="150">](https://boytchev.github.io/viu/model-pytha/index.html?a=20)
+[<img src="model-pytha/snapshot5.jpg" width="150">](https://boytchev.github.io/viu/model-pytha/index.html?a=30)
 
 The model can be used
 to demonstrate other geometrical relations, like areas of parallelograms.
