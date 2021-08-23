@@ -9,7 +9,7 @@ import {scene, MAX_ANISOTROPY} from './init.js';
 import {gapPos} from './frame.js';
 
 
-const COLOR_COLLISSIONS = false;
+const COLOR_COLLISSIONS = !false;
 
 export var activeTile;
 
@@ -45,142 +45,71 @@ var alphaC = new THREE.TextureLoader().load( '../textures/pytha-c-alpha.png' );
 
 
 
-function intersecting( box1, box2 )
+// Modified from https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
+function isect( p0, p1, p2, p3 )
 {
-	var eps = 1;
-	
-	// touching boxes count as NON intersecting
-	return box1.max.x < box2.min.x+eps || box1.min.x > box2.max.x-eps ||
-		box1.max.z < box2.min.z+eps || box1.min.z > box2.max.z-eps ? false : true;
+    var s1_x = p1.x - p0.x,
+		s1_z = p1.z - p0.z,
+		s2_x = p3.x - p2.x,
+		s2_z = p3.z - p2.z;
 
+	var s = (-s1_z * (p0.x - p2.x) + s1_x * (p0.z - p2.z)) / (-s2_x * s1_z + s1_x * s2_z),
+		t = ( s2_x * (p0.z - p2.z) - s2_z * (p0.x - p2.x)) / (-s2_x * s1_z + s1_x * s2_z);
+
+	const eps = 0.01;
+	
+    return s>eps && s<1-eps && t>eps && t<1-eps;
 }
 
-function crossing( box1, box2 )
+// intersection of two triangles
+function tsect( t1, t2 )
 {
-	var e = -1;
-	
-	// touching boxes count as NON intersecting
-	
-	//z+  +---+
-	//    |1  |
-	//    + +-+----+
-	//    | | |   2|  
-	//    | +-+----+
-	//z+  +---+
-    //  x-         x+
+	if( isect(t1.a,t1.b, t2.a,t2.b ) ) return true;
+	if( isect(t1.a,t1.b, t2.b,t2.c ) ) return true;
+	if( isect(t1.a,t1.b, t2.c,t2.a ) ) return true;
 
-	if( box1.max.z+e>box2.max.z && box1.min.z-e<box2.min.z && box2.min.x-e<box1.max.x && box2.max.x+e>box1.max.x ) return true;
-	if( box1.max.x+e>box2.max.x && box1.min.x-e<box2.min.x && box2.min.z-e<box1.max.z && box2.max.z+e>box1.max.z ) return true;
-	
-	if( box2.max.z+e>box1.max.z && box2.min.z-e<box1.min.z && box1.min.x-e<box2.max.x && box1.max.x+e>box2.max.x ) return true;
-	if( box2.max.x+e>box1.max.x && box2.min.x-e<box1.min.x && box1.min.z-e<box2.max.z && box1.max.z+e>box2.max.z ) return true;
+	if( isect(t1.b,t1.c, t2.a,t2.b ) ) return true;
+	if( isect(t1.b,t1.c, t2.b,t2.c ) ) return true;
+	if( isect(t1.b,t1.c, t2.c,t2.a ) ) return true;
+
+	if( isect(t1.c,t1.a, t2.a,t2.b ) ) return true;
+	if( isect(t1.c,t1.a, t2.b,t2.c ) ) return true;
+	if( isect(t1.c,t1.a, t2.c,t2.a ) ) return true;
 	
 	return false;
 }
 
-function trintersecting( trig1, trig3)
-{
-	return (trig1.containsPoint(trig3.a) ||
-			trig1.containsPoint(trig3.b) ||
-			trig1.containsPoint(trig3.c) ||
-			trig3.containsPoint(trig1.a) ||
-			trig3.containsPoint(trig1.b) ||
-			trig3.containsPoint(trig1.c));
-}
 
 function hasCollissions()
 {
-	if( COLOR_COLLISSIONS )
-	{
-		tile1.children[1].material.color = new THREE.Color( 'white' );
-		tile2.children[1].material.color = new THREE.Color( 'white' );
-		tile3.children[1].material.color = new THREE.Color( 'white' );
-		tile4.children[1].material.color = new THREE.Color( 'white' );
-	}
-	
 	var box1 = new THREE.Box3().setFromObject( tile1 ),
 		box2 = new THREE.Box3().setFromObject( tile2 ),
 		box3 = new THREE.Box3().setFromObject( tile3 ),
 		box4 = new THREE.Box3().setFromObject( tile4 );
 	
-	var eps = 0.2;
 	var trig1 = new THREE.Triangle(
-					new THREE.Vector3(box1.min.x+eps,0,box1.min.z+eps),
-					new THREE.Vector3(box1.min.x+eps,0,box1.max.z+eps),
-					new THREE.Vector3(box1.max.x+eps,0,box1.max.z+eps) ),
+					new THREE.Vector3(box1.min.x,0,box1.min.z),
+					new THREE.Vector3(box1.min.x,0,box1.max.z),
+					new THREE.Vector3(box1.max.x,0,box1.max.z) ),
 		trig2 = new THREE.Triangle(
-					new THREE.Vector3(box2.max.x+eps,0,box2.min.z+eps),
-					new THREE.Vector3(box2.min.x+eps,0,box2.max.z+eps),
-					new THREE.Vector3(box2.max.x+eps,0,box2.max.z+eps) ),
+					new THREE.Vector3(box2.max.x,0,box2.min.z),
+					new THREE.Vector3(box2.min.x,0,box2.max.z),
+					new THREE.Vector3(box2.max.x,0,box2.max.z) ),
 		trig3 = new THREE.Triangle(
-					new THREE.Vector3(box3.max.x+eps,0,box3.min.z+eps),
-					new THREE.Vector3(box3.min.x+eps,0,box3.min.z+eps),
-					new THREE.Vector3(box3.max.x+eps,0,box3.max.z+eps) ),
+					new THREE.Vector3(box3.max.x,0,box3.min.z),
+					new THREE.Vector3(box3.min.x,0,box3.min.z),
+					new THREE.Vector3(box3.max.x,0,box3.max.z) ),
 		trig4 = new THREE.Triangle(
-					new THREE.Vector3(box4.max.x+eps,0,box4.min.z+eps),
-					new THREE.Vector3(box4.min.x+eps,0,box4.min.z+eps),
-					new THREE.Vector3(box4.min.x+eps,0,box4.max.z+eps) );
+					new THREE.Vector3(box4.max.x,0,box4.min.z),
+					new THREE.Vector3(box4.min.x,0,box4.min.z),
+					new THREE.Vector3(box4.min.x,0,box4.max.z) );
 
-
-	if( crossing(box1,box2) || intersecting(box1,box2) && trintersecting(trig1,trig2))
-	{
-		if( COLOR_COLLISSIONS )
-		{
-			tile1.children[1].material.color = new THREE.Color( 'crimson' );
-			tile2.children[1].material.color = new THREE.Color( 'crimson' );
-		}
-		return true;
-	}
-	
-	if( crossing(box1,box3) || intersecting(box1,box3) && trintersecting(trig1,trig3) )
-	{
-		if( COLOR_COLLISSIONS )
-		{
-			tile1.children[1].material.color = new THREE.Color( 'crimson' );
-			tile3.children[1].material.color = new THREE.Color( 'crimson' );
-		}
-		return true;
-	}
-	
-	if( crossing(box1,box4) || intersecting(box1,box4) && trintersecting(trig1,trig4) )
-	{
-		if( COLOR_COLLISSIONS )
-		{
-			tile1.children[1].material.color = new THREE.Color( 'crimson' );
-			tile4.children[1].material.color = new THREE.Color( 'crimson' );
-		}
-		return true;
-	}
-	
-	if( crossing(box2,box3) || intersecting(box2,box3) && trintersecting(trig2,trig3) )
-	{
-		if( COLOR_COLLISSIONS )
-		{
-			tile2.children[1].material.color = new THREE.Color( 'crimson' );
-			tile3.children[1].material.color = new THREE.Color( 'crimson' );
-		}
-		return true;
-	}
-	
-	if( crossing(box2,box4) || intersecting(box2,box4) && trintersecting(trig2,trig4) )
-	{
-		if( COLOR_COLLISSIONS )
-		{
-			tile2.children[1].material.color = new THREE.Color( 'crimson' );
-			tile4.children[1].material.color = new THREE.Color( 'crimson' );
-		}
-		return true;
-	}
-	
-	if( crossing(box3,box4) || intersecting(box3,box4) && trintersecting(trig3,trig4) )
-	{
-		if( COLOR_COLLISSIONS )
-		{
-			tile3.children[1].material.color = new THREE.Color( 'crimson' );
-			tile4.children[1].material.color = new THREE.Color( 'crimson' );
-		}
-		return true;
-	}
+	if( tsect( trig1, trig2 ) ) return true;
+	if( tsect( trig1, trig3 ) ) return true;
+	if( tsect( trig1, trig4 ) ) return true;
+	if( tsect( trig2, trig3 ) ) return true;
+	if( tsect( trig2, trig4 ) ) return true;
+	if( tsect( trig3, trig4 ) )	return true;
 
 	return false;
 }
