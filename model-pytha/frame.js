@@ -3,9 +3,12 @@
 
 import {FRAME_HEIGHT, FRAME_SIZE, FRAME_RADIUS, FRAME_WIDTH, FRAME_DENT, INNER_RADIUS, A, B, GROOVE_DENT, GROOVE_RADIUS, ANGLE, TILE_HEIGHT} from './config.js';
 import {MAX_ANISOTROPY, scene} from './init.js';
+import {BufferGeometryUtils} from '../js/BufferGeometryUtils.js';
+import {Braille} from './braille.js';
 
 
-var texture = new THREE.TextureLoader().load( '../textures/concrete.jpg' );
+//var texture = new THREE.TextureLoader().load( '../textures/concrete.jpg' );
+export var texture = new THREE.TextureLoader().load( '../textures/marble.jpg' );
 	texture.wrapS = THREE.RepeatWrapping;
 	texture.wrapT = THREE.RepeatWrapping;
 	texture.anisotropy = MAX_ANISOTROPY;
@@ -91,31 +94,16 @@ x = x+A;
 addGapPos( );
 
 
-var gapGeometry = new THREE.OctahedronGeometry( GROOVE_RADIUS, 2 ).scale(1,GROOVE_DENT/GROOVE_RADIUS,1),
-	gaps = [];
+var gaps = [];
 
 for( var pos of gapPos )
 {
-	gaps.push( new THREE.OctahedronGeometry( GROOVE_RADIUS, 2 ).scale(1,GROOVE_DENT/GROOVE_RADIUS,1).translate( pos.x, pos.y, pos.z ) );
+	gaps.push( new THREE.IcosahedronGeometry( GROOVE_RADIUS, 2 ).scale(1,GROOVE_DENT/GROOVE_RADIUS,1).translate( pos.x, pos.y, pos.z ) );
 }
 
-/* // possibly unused gaps
-var gap1 = new THREE.OctahedronGeometry( GROOVE_RADIUS, 2 ).scale(1,GROOVE_DENT/GROOVE_RADIUS,1).translate( x, y, x ),
-var gap1d = gap1.clone().translate( A*(B-A)/B-B, 0, -A ),
-	gap2d = gap1d.clone().rotateY( Math.PI/2 ),
-	gap3d = gap2d.clone().rotateY( Math.PI/2 ),
-	gap4d = gap3d.clone().rotateY( Math.PI/2 );
-var gap1e = gap1.clone().translate( A*A/B-B, 0, -B+A ),
-	gap2e = gap1e.clone().rotateY( Math.PI/2 ),
-	gap3e = gap2e.clone().rotateY( Math.PI/2 ),
-	gap4e = gap3e.clone().rotateY( Math.PI/2 );
-var gap1f = gap1.clone().translate( -A*A*B/(A*A+B*B), 0, -A*B*B/(A*A+B*B) ),
-	gap2f = gap1f.clone().rotateY( Math.PI/2 ),
-	gap3f = gap2f.clone().rotateY( Math.PI/2 ),
-	gap4f = gap3f.clone().rotateY( Math.PI/2 );
-*/
 
-// 3.2: bars at the sides
+// 3.2a: bars at the sides
+
 var x = FRAME_SIZE/2-A/2;
 
 var side1 = new THREE.BoxGeometry( GROOVE_DENT, GROOVE_DENT, 2*x ).rotateZ( Math.PI/4 ).scale(1,1/3,1).translate( x, y, 0 ),
@@ -123,7 +111,7 @@ var side1 = new THREE.BoxGeometry( GROOVE_DENT, GROOVE_DENT, 2*x ).rotateZ( Math
 	side3 = side2.clone().rotateY( Math.PI/2 ),
 	side4 = side3.clone().rotateY( Math.PI/2 );
 
-// 3.2: bars at the sides
+// 3.2b: bars at the sides
 
 var inside1 = side1.clone().translate( -A, 0, 0 ),
 	inside2 = inside1.clone().rotateY( Math.PI/2 ),
@@ -141,7 +129,7 @@ var groove1 = new THREE.BoxGeometry( GROOVE_DENT, GROOVE_DENT, len ).rotateZ( Ma
 
 // 3.4: cut off from rounded platform
 
-csg = CSG.subtract([ csg, side1, side2, side3, side4, inside1, inside2, inside3, inside4, groove1, groove2, groove3, groove4, ...gaps/*gap1d, gap2d, gap3d, gap4d, gap1e, gap2e, gap3e, gap4e, gap1f, gap2f, gap3f, gap4f*/]);
+csg = CSG.subtract([ csg, side1, side2, side3, side4, inside1, inside2, inside3, inside4, groove1, groove2, groove3, groove4, ...gaps]);
 
 
 
@@ -151,6 +139,7 @@ csg = CSG.subtract([ csg, side1, side2, side3, side4, inside1, inside2, inside3,
 // 4.1: convert CSG to BufferGeometry
 
 var	geometry = CSG.BufferGeometry(csg);
+geometry = BufferGeometryUtils.mergeVertices( geometry, 0.001 );
 
 // 4.2: set vertex colour of grooves and uv texture coordinates
 
@@ -172,7 +161,7 @@ for( var i=0; i<pos.count; i++ )
 
 	// generate vertex colors 
 	if( ny>0.5 && y<0 )
-		color.push( 0.7,0.6,0.5 );
+		color.push( 0.6,0.5,0.4 );
 	else
 		color.push( 1,1,1 );
 	
@@ -189,18 +178,20 @@ geometry.setAttribute( 'uv', new THREE.BufferAttribute(new Float32Array(uv),2) )
 geometry.setAttribute( 'color', new THREE.BufferAttribute(new Float32Array(color),3) );
 
 
+console.log('frame',geometry.getAttribute( 'position' ).count);
+
 geometry.computeVertexNormals();
 
 
 var material = new THREE.MeshStandardMaterial( {
 		color: 'white',
-		roughness: 1,
+		roughness: 0.7,
 		metalness: 0,
-		emissive: 'ivory',
-		emissiveIntensity: 0.13,
+		//semissive: 'ivory',
+		//emissiveIntensity: 0.2,
 		map: texture,
-		bumpMap: texture,
-		bumpScale: 0.15,
+		//bumpMap: texture,
+		//bumpScale: 0.15,
 		//side: THREE.DoubleSide,
 		vertexColors: true,
 		//wireframe: true,
@@ -214,6 +205,22 @@ var mesh = new THREE.Mesh( geometry, material );
 
 		
 scene.add( mesh );
+
+
+
+
+// "Viu"
+var mapViu = new THREE.TextureLoader().load( '../textures/viu.png' );
+	mapViu.anisotropy = MAX_ANISOTROPY;
+
+var normalViu = new THREE.TextureLoader().load( '../textures/viu-normal.png' );
+	normalViu.anisotropy = MAX_ANISOTROPY;
+
+var braille = new Braille( 4, 2, mapViu, normalViu );
+	braille.material.color = new THREE.Color( 'white' );
+	braille.position.set( FRAME_SIZE/2-5, 0, FRAME_SIZE/2+FRAME_WIDTH+0.1 );
+	braille.rotation.x = Math.PI/2;
+	mesh.add( braille );
 
 
 

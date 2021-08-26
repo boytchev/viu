@@ -6,7 +6,8 @@
 //
 import {FRAME_SIZE, TILE_HEIGHT, FRAME_WIDTH, A, B, GROOVE_DENT, GROOVE_RADIUS, MATRIX, ANGLE, TILE_RADIUS} from './config.js';
 import {scene, MAX_ANISOTROPY} from './init.js';
-import {gapPos} from './frame.js';
+import {gapPos, texture} from './frame.js';
+import {Braille} from './braille.js';
 
 
 const COLOR_COLLISSIONS = !false;
@@ -19,29 +20,20 @@ export var activeTile;
 var mapA = new THREE.TextureLoader().load( '../textures/pytha-a.png' );
 	mapA.anisotropy = MAX_ANISOTROPY;
 
-var bumpA = new THREE.TextureLoader().load( '../textures/pytha-a-bump.png' );
-	bumpA.anisotropy = MAX_ANISOTROPY;
-
-var alphaA = new THREE.TextureLoader().load( '../textures/pytha-a-alpha.png' );
-	alphaA.anisotropy = MAX_ANISOTROPY;
+var normalA = new THREE.TextureLoader().load( '../textures/pytha-a-normal.png' );
+	normalA.anisotropy = MAX_ANISOTROPY;
 
 var mapB = new THREE.TextureLoader().load( '../textures/pytha-b.png' );
 	mapB.anisotropy = MAX_ANISOTROPY;
 
-var bumpB = new THREE.TextureLoader().load( '../textures/pytha-b-bump.png' );
-	bumpB.anisotropy = MAX_ANISOTROPY;
-
-var alphaB = new THREE.TextureLoader().load( '../textures/pytha-b-alpha.png' );
-	alphaB.anisotropy = MAX_ANISOTROPY;
+var normalB = new THREE.TextureLoader().load( '../textures/pytha-b-normal.png' );
+	normalB.anisotropy = MAX_ANISOTROPY;
 
 var mapC = new THREE.TextureLoader().load( '../textures/pytha-c.png' );
 	mapC.anisotropy = MAX_ANISOTROPY;
 
-var bumpC = new THREE.TextureLoader().load( '../textures/pytha-c-bump.png' );
-	bumpC.anisotropy = MAX_ANISOTROPY;
-
-var alphaC = new THREE.TextureLoader().load( '../textures/pytha-c-alpha.png' );
-	alphaC.anisotropy = MAX_ANISOTROPY;
+var normalC = new THREE.TextureLoader().load( '../textures/pytha-c-normal.png' );
+	normalC.anisotropy = MAX_ANISOTROPY;
 
 
 
@@ -142,120 +134,81 @@ export class Tile extends THREE.Group
 				steps: 1,
 				depth: TILE_HEIGHT,
 				bevelEnabled: false,
-			});
-							
+			}).rotateX(-Math.PI/2);
+
+		var pos = geometry.getAttribute( 'position' ),
+			uv = geometry.getAttribute( 'uv' );
+
+		for( var i=0; i<pos.count; i++ )
+		{
+			var x = pos.getX( i ),
+				z = pos.getZ( i );
+				
+			uv.setXY( i, 0.02*x+this.tileId/5, 0.02*z+this.tileId/2 );
+		}
+
 		var material = new THREE.MeshPhysicalMaterial( {
-				roughness: 0.2,
+				color: new THREE.Color(0.6,0.5,0.4),
+				roughness: 0.9,
 				metalness: 0,
-				emissive: 'cornflowerblue',
-				emissiveIntensity: 0.5,
-				clearcoat: 1,
-				sheen: new THREE.Color('crimson'),
-				transmission: 1,
-				thickness: 1,
-				ior: 1,
-				transparent: true,
-				opacity: 1,
+				side: THREE.DoubleSide,
+				map: texture,
 			});
 					
 		this.plateMesh = new THREE.Mesh( geometry, material );
-		this.plateMesh.rotation.x = -Math.PI/2;
 		this.plateMesh.position.set( -A/2, 0, A/2 );
 		this.plateMesh.castShadow = true;
-					
-		var scriptGeometry = new THREE.PlaneGeometry( 1.5*2, 2, 50, 50 ).rotateX( -Math.PI/2 );
-		
-		this.scriptA = new THREE.Mesh(
-			scriptGeometry,
-			new THREE.MeshPhysicalMaterial({
-				color: 'black',
-				map: mapA,
-				displacementMap: bumpA,
-				displacementScale: 0.5,
-				transparent: true,
-				alphaMap: alphaA,
-				polygonOffset: true,
-				polygonOffsetFactor: -2,
-				polygonOffsetUnits: -2,
-				
-			})
-		);
-		this.scriptA.position.set(0, TILE_HEIGHT, A/2-2);
-		this.add( this.scriptA );
-		
-		this.scriptB = new THREE.Mesh(
-			scriptGeometry,
-			new THREE.MeshPhysicalMaterial({
-				color: 'black',
-				map: mapB,
-				displacementMap: bumpB,
-				displacementScale: 0.5,
-				transparent: true,
-				alphaMap: alphaB,
-				polygonOffset: true,
-				polygonOffsetFactor: -2,
-				polygonOffsetUnits: -2,
-				
-			})
-		);
-		this.scriptB.position.set(-A/2+2, TILE_HEIGHT, -B/3+A/2 );
-		this.scriptB.rotation.y = -Math.PI/2;
-		this.add( this.scriptB );
+		this.plateMesh.receiveShadow = true;
 
-		this.scriptC = new THREE.Mesh(
-			scriptGeometry,
-			new THREE.MeshPhysicalMaterial({
-				color: 'black',
-				map: mapC,
-				displacementMap: bumpC,
-				displacementScale: 0.5,
-				transparent: true,
-				alphaMap: alphaC,
-				polygonOffset: true,
-				polygonOffsetFactor: -2,
-				polygonOffsetUnits: -2,
-				
-			})
-		);
-		this.scriptC.position.set(-1, TILE_HEIGHT, -B/2+A/2+1 );
-		this.scriptC.rotation.y = ANGLE+Math.PI/2;
-		this.add( this.scriptC );
+		var scriptGeometry = new THREE.PlaneGeometry( 3, 3 ).rotateX( -Math.PI/2 );
+
+		// "A"
+		var braille = new Braille( 3, 3, mapA, normalA );
+			braille.position.set( -1, TILE_HEIGHT, A/2-2 );
+			this.add( braille );
+		
+		// "B"
+		var braille = new Braille( 3, 3, mapB, normalB );
+			braille.position.set( -A/2+2, TILE_HEIGHT, A/2-B/2 );
+			braille.rotation.y = -Math.PI/2;
+			this.add( braille );
+		
+		// "C"
+		var braille = new Braille( 3, 3, mapC, normalC );
+			braille.position.set( -2, TILE_HEIGHT, -B/2+A/2+2 );
+			braille.rotation.y = ANGLE+Math.PI/2;
+			this.add( braille );
 		
 		this.lineMesh = new THREE.LineSegments( 
 				new THREE.EdgesGeometry( geometry, 90 ),
-				new THREE.LineBasicMaterial( { color: 'white', transparent: true, opacity: 0.35 } ) );
+				new THREE.LineBasicMaterial( { color: 'black', transparent: true, opacity: 0.25 } ) );
 		this.plateMesh.add( this.lineMesh );
 
 		var shape = new THREE.Shape();
 			shape.moveTo( 0, 0 );
 			shape.absarc( 0, 0, R, 0, 2*Math.PI );
 				
-		var geometry = new THREE.SphereGeometry( R, 30, 10, 0, 2*Math.PI, 0, Math.PI/2 ).scale(1,0.5,1);
+		const points = [];
+		for ( let i = 0; i < 20; i ++ ) {
+			points.push( new THREE.Vector2( 2*R*i/20, 0.1*Math.cos( i/20 * Math.PI )+TILE_HEIGHT/2 ) );
+		}
+		var geometry = new THREE.LatheGeometry( points, 40 ),
+			pos = geometry.getAttribute( 'position' ),
+			uv = geometry.getAttribute( 'uv' );
+
+		for( var i=0; i<pos.count; i++ )
+		{
+			var x = pos.getX( i ),
+				z = pos.getZ( i );
 				
+			uv.setXY( i, 0.02*x+this.tileId/5, 0.02*z+this.tileId/2 );
+		}
+		
 		this.bumpMesh = new THREE.Mesh( geometry, material );
 		this.bumpMesh.position.y = TILE_HEIGHT;
-		//this.bumpMesh.castShadow = true;
-		//this.bumpMesh.receiveShadow = true;
-
-		var material = new THREE.MeshPhysicalMaterial( {
-				roughness: 1,
-				metalness: 0,
-				color: 'cornflowerblue',
-				clearcoat: 1,
-				sheen: new THREE.Color('crimson'),
-				//side: THREE.DoubleSide,
-				//transparent: true,
-				//opacity: 0.7,
-			});
-					
-		this.bumpSubMesh = new THREE.Mesh( geometry, material );
-		this.bumpSubMesh.position.y = TILE_HEIGHT/2;
-		this.bumpSubMesh.rotation.x = Math.PI;
-		this.bumpSubMesh.castShadow = true;
-		this.bumpSubMesh.receiveShadow = true;
 
 		this.isTile = true;
-		this.add( this.bumpSubMesh, this.bumpMesh, this.plateMesh );
+		this.add( this.bumpMesh, this.plateMesh );
 	} // Tile.constructor
 
 
