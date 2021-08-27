@@ -187,15 +187,8 @@ var material = new THREE.MeshStandardMaterial( {
 		color: 'white',
 		roughness: 0.7,
 		metalness: 0,
-		//semissive: 'ivory',
-		//emissiveIntensity: 0.2,
 		map: texture,
-		//bumpMap: texture,
-		//bumpScale: 0.15,
-		//side: THREE.DoubleSide,
 		vertexColors: true,
-		//wireframe: true,
-		
 } );	
 
 							

@@ -17,22 +17,22 @@ export var activeTile;
 
 // load textures
 
-var mapA = new THREE.TextureLoader().load( '../textures/pytha-a.png' );
+var mapA = new THREE.TextureLoader().load( '../textures/a.jpg' );
 	mapA.anisotropy = MAX_ANISOTROPY;
 
-var normalA = new THREE.TextureLoader().load( '../textures/pytha-a-normal.png' );
+var normalA = new THREE.TextureLoader().load( '../textures/a-normal.jpg' );
 	normalA.anisotropy = MAX_ANISOTROPY;
 
-var mapB = new THREE.TextureLoader().load( '../textures/pytha-b.png' );
+var mapB = new THREE.TextureLoader().load( '../textures/b.jpg' );
 	mapB.anisotropy = MAX_ANISOTROPY;
 
-var normalB = new THREE.TextureLoader().load( '../textures/pytha-b-normal.png' );
+var normalB = new THREE.TextureLoader().load( '../textures/b-normal.jpg' );
 	normalB.anisotropy = MAX_ANISOTROPY;
 
-var mapC = new THREE.TextureLoader().load( '../textures/pytha-c.png' );
+var mapC = new THREE.TextureLoader().load( '../textures/c.jpg' );
 	mapC.anisotropy = MAX_ANISOTROPY;
 
-var normalC = new THREE.TextureLoader().load( '../textures/pytha-c-normal.png' );
+var normalC = new THREE.TextureLoader().load( '../textures/c-normal.jpg' );
 	normalC.anisotropy = MAX_ANISOTROPY;
 
 
