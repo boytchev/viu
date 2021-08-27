@@ -17,17 +17,18 @@
 
 			import {scene, camera, controls} from './init.js';		// initialize the scene
 			import './config.js';	// configuration of the model
-			import './floor.js';	// textile floor
-			import './ruler.js';
-//			import {sensorPlane, sensorPoint} from './frame.js';	// frame of the model
-//			import {Tile, tiles, blur, activeTile} from './tiles.js';	// four tiles
+			import {floor} from './floor.js';	// textile floor
+			import {rulers} from './ruler.js';
+			import './frame.js';
 			
 
 			// manage interactivity events
-/*
+
 			var mouse = new THREE.Vector2(), // current mouse or touch position
 				raycaster = new THREE.Raycaster(),
 				dragging = false;
+
+			var activeRuler;
 
 			document.addEventListener('mousedown', onMouseDown);
 			document.addEventListener('mouseup', onMouseUp);
@@ -39,15 +40,15 @@
 			document.addEventListener('touchmove', onMouseMove);
 
 
-			function pointedTile()
+			function pointedRuler()
 			{
 				raycaster.setFromCamera( mouse, camera );
 
-				var intersects = raycaster.intersectObjects( tiles, true);
+				var intersects = raycaster.intersectObjects( rulers, true);
 				if( intersects.length )
 				{
 					var object = intersects[0].object;
-					while( !object.isTile ) object = object.parent;
+					while( !object.isRuler ) object = object.parent;
 					
 					return object;
 				}
@@ -60,11 +61,10 @@
 			{
 				raycaster.setFromCamera( mouse, camera );
 
-				var intersects = raycaster.intersectObject( sensorPlane );
+				var intersects = raycaster.intersectObject( floor );
 
 				if( intersects.length )
 				{
-					sensorPoint.position.copy( intersects[0].point );
 					return intersects[0].point;
 				}
 				return null;
@@ -78,23 +78,20 @@
 			//	controls.enabled = true;
 				userInput(event);
 				
-				var tile = pointedTile();
-				if( tile )
+				var ruler = pointedRuler();
+				if( ruler )
 				{
 					controls.enabled = false;
-					tile.focus();
+					activeRuler = ruler;
 					
 					var pos = pointedLocation();
 					if( pos )
 					{
-						activeTile.dX = activeTile.position.x - pos.x;
-						activeTile.dZ = activeTile.position.z - pos.z;
-						activeTile.x = activeTile.position.x;
-						activeTile.z = activeTile.position.z;
+						activeRuler.dX = activeRuler.position.x - pos.x;
+						activeRuler.dZ = activeRuler.position.z - pos.z;
+						activeRuler.x = activeRuler.position.x;
+						activeRuler.z = activeRuler.position.z;
 					}
-				}
-				else
-				{
 				}
 			}
 
@@ -102,7 +99,7 @@
 
 			function onMouseUp(event)
 			{
-				if( activeTile ) activeTile.snapToDot();
+//				if( activeTile ) activeTile.snapToDot();
 				controls.resetState();
 				controls.enabled = true;
 				dragging = false;
@@ -116,12 +113,12 @@
 				if( dragging )
 				{
 					// dragging scene or tile
-					if( activeTile )
+					if( activeRuler )
 					{
 						var pos = pointedLocation();
 						if( pos )
 						{
-							activeTile.snapToLines( pos.x + activeTile.dX, pos.z + activeTile.dZ );
+							activeRuler.snapToZone( pos.x + activeRuler.dX, pos.z + activeRuler.dZ );
 						} // if pos
 					} // if activeTile
 				}
@@ -130,11 +127,12 @@
 					// moving the cursor
 					userInput(event);
 					
-					var tile = pointedTile();
-					if( tile )
-						tile.focus( false );
+					var ruler = pointedRuler();
+
+					if( ruler )
+						activeRuler = ruler;
 					else
-						blur();
+						if( activeRuler) activeRuler = undefined;
 				}
 			}
 
@@ -161,7 +159,7 @@
 					mouse.y = -event.touches[0].clientY / window.innerHeight * 2 + 1;
 				}
 			}
-*/
+
 
 		</script>
 		

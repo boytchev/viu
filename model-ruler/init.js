@@ -63,8 +63,8 @@ var subLight = new THREE.SpotLight( 'white', 0.3 );
 
 // coordinate system
 //
-var axesHelper = new THREE.AxesHelper( 100 );
-	scene.add( axesHelper );
+//var axesHelper = new THREE.AxesHelper( 100 );
+//	scene.add( axesHelper );
 	
 // interactive mouse and touch controllers
 
@@ -74,9 +74,9 @@ var axesHelper = new THREE.AxesHelper( 100 );
 //			}; // added by P. Boytchev
 
 var controls = new THREE.OrbitControls( camera, renderer.domElement );
-	controls.maxPolarAngle = Math.PI * 0.4;
+	controls.maxPolarAngle = Math.PI * 0.45;
 	controls.minDistance = 20;
-	controls.maxDistance = 130;
+	controls.maxDistance = 200;
 	controls.enableDamping = !true;
 	controls.dampingFactor = 0.5;
 	controls.rotateSpeed = 0.3;

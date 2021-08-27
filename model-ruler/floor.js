@@ -28,11 +28,12 @@ var material = new THREE.MeshStandardMaterial( {
 	bumpMap: texture
 } );
 
-		
-var mesh = new THREE.Mesh( geometry, material );
-	mesh.position.y = -RULER_HEIGHT/2;
-	mesh.receiveShadow = true;
-	mesh.rotation.x = -Math.PI/2;
+
+var floor = new THREE.Mesh( geometry, material );
+	floor.receiveShadow = true;
+	floor.rotation.x = -Math.PI/2;
 
 	
-scene.add( mesh );
+scene.add( floor );
+
+export {floor};

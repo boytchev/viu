@@ -1,8 +1,21 @@
 ﻿
 // create the static frame of the model
 
-import {RULER_LENGTH, RULER_WIDTH, RULER_HEIGHT, MARK_WIDTH, MARK_HEIGHT} from './config.js';
+import {RULER_LENGTH, RULER_WIDTH, RULER_HEIGHT, MARK_WIDTH, MARK_HEIGHT, FRAME_HEIGHT} from './config.js';
 import {MAX_ANISOTROPY, scene} from './init.js';
+import {Braille} from './braille.js';
+
+var maps = [],
+	normals = [];
+
+for( var i=1; i<10; i++ )
+{	
+	maps[i] = new THREE.TextureLoader().load( `../textures/${i}.jpg` );
+	maps[i].anisotropy = MAX_ANISOTROPY;
+
+	normals[i] = new THREE.TextureLoader().load( `../textures/${i}-normal.jpg` );
+	normals[i].anisotropy = MAX_ANISOTROPY;
+}
 
 const EPS = 0.01*RULER_HEIGHT;
 
@@ -45,20 +58,14 @@ for( var i = 600; i<=1000; i+=20 )
 
 
 const GROOVE_POS = [];
-	GROOVE_POS[ TYPE_X_00 ] = '-------------------------';
-	GROOVE_POS[ TYPE_1_00 ] = '..........---------------';
-	GROOVE_POS[ TYPE_0_05 ] = '.......................--';
-	GROOVE_POS[ TYPE_0_10 ] = '................---------';
-	GROOVE_POS[ TYPE_0_20 ] = '................----..---';
-	GROOVE_POS[ TYPE_0_50 ] = '.............--..--------';
+	GROOVE_POS[ TYPE_X_00 ] = '-----------------------';
+	GROOVE_POS[ TYPE_1_00 ] = '--------.......--------';
+	GROOVE_POS[ TYPE_0_05 ] = '--...................--';
+	GROOVE_POS[ TYPE_0_10 ] = '----...............----';
+	GROOVE_POS[ TYPE_0_20 ] = '---..--.........--..---';
+	GROOVE_POS[ TYPE_0_50 ] = '------.-.......-.------';
 	
 	
-var texture = new THREE.TextureLoader().load( '../textures/concrete.jpg' );
-	texture.wrapS = THREE.RepeatWrapping;
-	texture.wrapT = THREE.RepeatWrapping;
-	texture.anisotropy = MAX_ANISOTROPY;
-
-
 function markPos( index )
 {
 	return RULER_LENGTH * Math.log(marks[index]/100) / Math.log(10) - RULER_LENGTH/2;
@@ -66,14 +73,18 @@ function markPos( index )
 
 export class Ruler extends THREE.Group
 {
-	constructor()
+	constructor( scale, prefix, suffix )
 	{
 		super();
+
+		this.position.y = FRAME_HEIGHT/2;
+		
+		this.isRuler = true;
 		
 		const SLICES = 4*marks.length,
 			  Z_SLICES = 24;
-		
-		var geometry = new THREE.BoxGeometry( RULER_LENGTH, RULER_HEIGHT, RULER_WIDTH, SLICES, 2, Z_SLICES );
+
+		var geometry = new THREE.BoxGeometry( scale*RULER_LENGTH, RULER_HEIGHT, RULER_WIDTH, SLICES, 2, Z_SLICES );
 
 		var color = [];
 		var uv = [];
@@ -90,29 +101,29 @@ export class Ruler extends THREE.Group
 			var ny = nor.getY( i );
 
 			// generate bumps
-			var vi = Math.round( (x+RULER_LENGTH/2)/ (RULER_LENGTH/SLICES) ); // vertex index [0..SLICES]
+			var vi = Math.round( (SLICES-1) * (x+scale*RULER_LENGTH/2)/(scale*RULER_LENGTH) ); // vertex index [0..SLICES]
 			var ni = Math.floor( vi/4 ); // mark index [0..90]
 
-			var wi = Math.round( (z+RULER_WIDTH/2)/ (RULER_WIDTH/Z_SLICES) ); // z-vertex index [0..Z_SLICES]
+			var wi = Math.round( Z_SLICES * (z+RULER_WIDTH/2)/RULER_WIDTH ); // z-vertex index [0..Z_SLICES]
 
 			var type = types[ni];
 
 			switch( vi%4 )
 			{
 				case 0:
-					x = markPos( ni ) - MARK_WIDTH/2;
+					x = scale*markPos( ni ) - MARK_WIDTH/2;
 					break;
 				case 1:
-					x = markPos( ni ) - MARK_WIDTH/3;
+					x = scale*markPos( ni ) - MARK_WIDTH/3;
 
-					if( y>0.1  ) y += MARK_HEIGHT*(GROOVE_POS[type][wi]=='-'?1:0);
+					if( y>0.1  ) y += MARK_HEIGHT*((prefix+GROOVE_POS[type]+suffix)[wi]=='-'?1:0);
 					break;
 				case 2:
-					x = markPos( ni ) + MARK_WIDTH/3;
-					if( y>0.1 ) y += MARK_HEIGHT*(GROOVE_POS[type][wi]=='-'?1:0);
+					x = scale*markPos( ni ) + MARK_WIDTH/3;
+					if( y>0.1 ) y += MARK_HEIGHT*((prefix+GROOVE_POS[type]+suffix)[wi]=='-'?1:0);
 					break;
 				case 3:
-					x = markPos( ni ) + MARK_WIDTH/2;
+					x = scale*markPos( ni ) + MARK_WIDTH/2;
 					break;
 			}
 
@@ -130,7 +141,7 @@ export class Ruler extends THREE.Group
 				uv.push( 0.02*x, 0.02*z );
 			else
 				uv.push( 0.02*(x+z), 0.02*y );
-			
+
 			pos.setXYZ( i, x, y, z );
 		}
 
@@ -160,11 +171,56 @@ export class Ruler extends THREE.Group
 			mesh.receiveShadow = true;
 
 		this.add( mesh );
+
+		var textIndices = [];
+		for( var i=0; i<types.length; i++ ) if( types[i]==TYPE_1_00 ) textIndices.push(i);
+		
+		const BRAILLE_SIZE = 1.6,
+		      BRAILLE_OFFSET = prefix?0.3:-0.3;
+		
+		for( var i=0; i<textIndices.length; i++ )
+		{
+			var braille = new Braille( BRAILLE_SIZE, BRAILLE_SIZE, maps[i+2], normals[i+2] );
+				braille.material.color = new THREE.Color( 'white' );
+				braille.position.set( scale*markPos(textIndices[i]), RULER_HEIGHT/2, BRAILLE_OFFSET );
+				this.add( braille );
+		}
+		
+		var braille = new Braille( BRAILLE_SIZE, BRAILLE_SIZE, maps[1], normals[1] );
+			braille.material.color = new THREE.Color( 'white' );
+			braille.position.set( scale*markPos(0)+1.2, RULER_HEIGHT/2, BRAILLE_OFFSET );
+			this.add( braille );
+		
+		var braille = new Braille( BRAILLE_SIZE, BRAILLE_SIZE, maps[1], normals[1] );
+			braille.material.color = new THREE.Color( 'white' );
+			braille.position.set( scale*markPos(90)-1.2, RULER_HEIGHT/2, BRAILLE_OFFSET );
+			this.add( braille );
 	}
+	
+	// defines whether given position is available
+	snapToZone( newX, newZ )
+	{
+		this.position.x = newX;
+
+		// if no snap data, exit
+		if( !this.snap ) return;
+		
+		// clamp to border
+		this.position.x = THREE.Math.clamp( this.position.x, this.snap.minX, this.snap.maxX );
+		
+	} // Tile.availablePosition
 }
 
-var ruler1 = new Ruler();
+var ruler1 = new Ruler(1,'..','');
+	ruler1.position.z = -RULER_WIDTH/2-0.03;
+	ruler1.snap = { minX: -RULER_LENGTH, maxX: RULER_LENGTH };
+	
+var ruler2 = new Ruler(2,'','..');
+	ruler2.position.z = +RULER_WIDTH/2+0.03;
+	ruler2.snap = { minX: -2*RULER_LENGTH, maxX: 2*RULER_LENGTH };
 
-scene.add( ruler1 );
+scene.add( ruler1, ruler2 );
+
+export var rulers = [ruler1, ruler2];
 
 
