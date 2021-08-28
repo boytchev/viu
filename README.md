@@ -60,7 +60,7 @@ multiplication, division, square root, etc.
 
 The application can be used to demonstrate or explore:
 
-- Operations like <em>xy</em>, <em>x/y</em> and <em>1/x</em> <img src="model-ruler/functions1.png" height="20" >;
+- Operations like <img src="https://render.githubusercontent.com/render/math?math=1/x,xy,x/y">;
 - Operations like <em>x<sup>n</sup></em> and <em><sup>n</sup>&Sqrt;x</em> <img src="model-ruler/functions2.png" height="20" >;
 - Overflow and underflow calculations;
 - Mathematical foundations of the slide rule.
