@@ -60,7 +60,7 @@ which make it possible to generate a slide rule for  not only for
 
 The application can be used to demonstrate or explore:
 
-- Operations like <img src="model-ruler/formula.svg">;
+- Operations like <img src="https://boytchev.github.io/viu/model-ruler//formula.svg">;
 - Overflow and underflow calculations;
 - Study of operations and their properties.
 
