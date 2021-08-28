@@ -61,7 +61,7 @@ multiplication, division, square root, etc.
 The application can be used to demonstrate or explore:
 
 - Operations like <em>xy</em>, <em>x/y</em> and <em>1/x</em>;
-- Operations like <em>x<sup>n</sup></em> and <em><sup>n</sup>&Sqrt;x</em>;
+- Operations like <em>x<sup>n</sup></em> and <em><sup>n</sup>√x</em>;
 - Overflow and underflow calculations;
 - Mathematical foundations of the slide rule.
 
