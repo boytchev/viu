@@ -51,7 +51,8 @@ the two rulers and the cursor can slide sideways.
 [<img src="model-ruler/snapshot1.jpg">](https://boytchev.github.io/viu/model-ruler/index.html)
 
 The slide rule is configurable &ndash; it can be extended or shrinked,
-which make it possible to generate a slide rule for  not only for
+which make it possible to generate a slide rule for division, square
+root and cubic root:
 
 
 [<img src="model-ruler/snapshot2.jpg" width="200">](https://boytchev.github.io/viu/model-ruler/index.html?a=1&b=1)
@@ -60,7 +61,8 @@ which make it possible to generate a slide rule for  not only for
 
 The application can be used to demonstrate or explore:
 
-- Operations like <img src="model-ruler/functions.svg">;
+- Operations like <em>xy</em>, <em>x/y</em> and <em>1/x</em>, <img src="model-ruler/functions.png">;
+- Operations like <em>x<sup>n</sup></em> and <em><sup>n</sup>&sqrt;x</em>;
 - Overflow and underflow calculations;
 - Study of operations and their properties.
 
