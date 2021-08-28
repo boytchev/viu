@@ -51,9 +51,7 @@ the two rulers and the cursor can slide sideways.
 [<img src="model-ruler/snapshot1.jpg">](https://boytchev.github.io/viu/model-ruler/index.html)
 
 The slide rule is configurable &ndash; it can be extended or shrinked,
-which makes it possible to generate a slide rule for various operations:
-
-<img src="model-ruler/functions.svg">
+which makes it possible to generate a slide rule for various operations: <img src="model-ruler/functions.svg">
 
 [<img src="model-ruler/snapshot2.jpg" width="200">](https://boytchev.github.io/viu/model-ruler/index.html?a=1&b=1)
 [<img src="model-ruler/snapshot3.jpg" width="200">](https://boytchev.github.io/viu/model-ruler/index.html?a=1.2&b=0.6)
