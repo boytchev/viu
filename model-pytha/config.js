@@ -1,6 +1,7 @@
 ﻿
 // configuration of the model
 
+// URL parameter: ...html?a=[5..30]
 
 // sizes of the frame
 

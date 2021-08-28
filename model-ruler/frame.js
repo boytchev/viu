@@ -1,7 +1,7 @@
 ﻿
 // create the static frame of the model
 
-import {FRAME_WIDTH, FRAME_HEIGHT, FRAME_LENGTH, FRAME_RADIUS, RULER_HEIGHT, RULER_WIDTH, FRAME_INSET, MARK_WIDTH, RULER_LENGTH} from './config.js';
+import {FRAME_WIDTH, FRAME_HEIGHT, FRAME_LENGTH, FRAME_RADIUS, RULER_HEIGHT, RULER_WIDTH, FRAME_INSET, MARK_WIDTH, MARK_HEIGHT, RULER_LENGTH} from './config.js';
 import {MAX_ANISOTROPY, scene} from './init.js';
 import {rulers} from './ruler.js';
 import {BufferGeometryUtils} from '../js/BufferGeometryUtils.js';
@@ -23,6 +23,8 @@ class Frame extends THREE.Group
 
 		// 1.1: two crossed bars
 						
+		this.snap = { minX: -60, maxX: 60 };
+
 		var base1 = new THREE.BoxGeometry( FRAME_WIDTH, FRAME_HEIGHT, FRAME_LENGTH-2*FRAME_RADIUS ),
 			base2 = new THREE.BoxGeometry( FRAME_WIDTH-2*FRAME_RADIUS, FRAME_HEIGHT, FRAME_LENGTH );
 
@@ -129,6 +131,31 @@ class Frame extends THREE.Group
 			braille.rotation.x = Math.PI/2;
 			this.add( braille );
 
+		// thread
+		var material = new THREE.MeshBasicMaterial( {color: 'black'} ),
+			threadShadow = new THREE.Mesh(
+							new THREE.BoxGeometry( 3*MARK_WIDTH/2, FRAME_LENGTH, MARK_WIDTH/10 ),
+							new THREE.MeshBasicMaterial( {color: 'black', transparent: true, opacity:0.2} ), ),
+			thread = new THREE.Mesh(
+							new THREE.CylinderGeometry( MARK_WIDTH/4, MARK_WIDTH/4, FRAME_LENGTH+4*MARK_WIDTH ),
+							material ),
+			node1 = new THREE.Mesh(
+							new THREE.IcosahedronGeometry( 2*MARK_WIDTH, 2 ),
+							material ),
+			node2 = node1.clone();
+			
+		this.add( thread );
+		thread.add( node1, node2, threadShadow );
+		thread.rotation.x = Math.PI/2;
+		node1.position.y = FRAME_LENGTH/2+1*MARK_WIDTH;
+		node2.position.y = -FRAME_LENGTH/2-1*MARK_WIDTH;
+		thread.position.y = RULER_HEIGHT/2+MARK_WIDTH/2+MARK_HEIGHT;
+		threadShadow.position.x = 0;
+		//threadShadow.position.z = +0.2;
+		//threadShadow.position.x = -1/2;
+		thread.castShadow = true;
+		//threadShadow.castShadow = true;
+		
 		this.isRuler = true;
 	}
 
@@ -148,7 +175,6 @@ class Frame extends THREE.Group
 
 var frame = new Frame();
 	frame.position.y = FRAME_HEIGHT/2;
-	frame.snap = { minX: -RULER_LENGTH, maxX: RULER_LENGTH };
 
 scene.add( frame );
 

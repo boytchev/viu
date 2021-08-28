@@ -1,7 +1,7 @@
 ﻿
 // create the static frame of the model
 
-import {RULER_LENGTH, RULER_WIDTH, RULER_HEIGHT, MARK_WIDTH, MARK_HEIGHT, FRAME_HEIGHT} from './config.js';
+import {RULER_LENGTH, RULER_WIDTH, RULER_HEIGHT, MARK_WIDTH, MARK_HEIGHT, FRAME_HEIGHT, SCALE_A, SCALE_B} from './config.js';
 import {MAX_ANISOTROPY, scene} from './init.js';
 import {Braille} from './braille.js';
 
@@ -78,6 +78,7 @@ export class Ruler extends THREE.Group
 		super();
 
 		this.position.y = FRAME_HEIGHT/2;
+		this.snap = { minX: -scale*RULER_LENGTH/2-40, maxX: scale*RULER_LENGTH/2+40 };
 		
 		this.isRuler = true;
 		
@@ -191,10 +192,13 @@ export class Ruler extends THREE.Group
 			braille.position.set( scale*markPos(0)+1.2, RULER_HEIGHT/2, BRAILLE_OFFSET );
 			this.add( braille );
 		
-		var braille = new Braille( BRAILLE_SIZE, BRAILLE_SIZE, maps[1], normals[1] );
-			braille.material.color = new THREE.Color( 'white' );
-			braille.position.set( scale*markPos(90)-1.2, RULER_HEIGHT/2, BRAILLE_OFFSET );
-			this.add( braille );
+		if( scale>=0.6 )
+		{
+			var braille = new Braille( BRAILLE_SIZE, BRAILLE_SIZE, maps[1], normals[1] );
+				braille.material.color = new THREE.Color( 'white' );
+				braille.position.set( scale*markPos(90)-1.2, RULER_HEIGHT/2, BRAILLE_OFFSET );
+				this.add( braille );
+		}
 	}
 	
 	// defines whether given position is available
@@ -211,13 +215,11 @@ export class Ruler extends THREE.Group
 	} // Tile.availablePosition
 }
 
-var ruler1 = new Ruler(1,'..','');
+var ruler1 = new Ruler(SCALE_A,'..','');
 	ruler1.position.z = -RULER_WIDTH/2-0.03;
-	ruler1.snap = { minX: -RULER_LENGTH, maxX: RULER_LENGTH };
 	
-var ruler2 = new Ruler(2,'','..');
+var ruler2 = new Ruler(SCALE_B,'','..');
 	ruler2.position.z = +RULER_WIDTH/2+0.03;
-	ruler2.snap = { minX: -2*RULER_LENGTH, maxX: 2*RULER_LENGTH };
 
 scene.add( ruler1, ruler2 );
 

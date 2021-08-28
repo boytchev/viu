@@ -41,6 +41,29 @@ the application can be used to demonstrate or explore:
 - Second degree equations.
 
 
+# Slide rule
+
+This is a virtual prototype of a 3D printed model of a slide rule.
+It is modified version of an ordinary logarithmic slide rule, with
+added relief marks and thread cursor. All three combonents &ndash;
+the two rulers and the cursor can slide sideways.
+
+[<img src="model-ruler/snapshot1.jpg">](https://boytchev.github.io/viu/model-ruler/index.html)
+
+The slide rule is configurable &ndash; it can be extended or shrinked,
+which make it possible to generate a slide rule for  not only for
+
+
+[<img src="model-ruler/snapshot2.jpg" width="200">](https://boytchev.github.io/viu/model-ruler/index.html?a=1&b=1)
+[<img src="model-ruler/snapshot3.jpg" width="200">](https://boytchev.github.io/viu/model-ruler/index.html?a=1.2&b=0.6)
+[<img src="model-ruler/snapshot4.jpg" width="200">](https://boytchev.github.io/viu/model-ruler/index.html?a=0.3&b=0.9)
+
+The application can be used to demonstrate or explore:
+
+- Operations like <img src="model-ruler/formula.svg">;
+- Overflow and underflow calculations;
+- Study of operations and their properties.
+
 
 # Papers
 
