@@ -193,7 +193,8 @@ class Frame extends THREE.Group
 			mesh.castShadow = true;
 			mesh.receiveShadow = true;
 			this.add( mesh );
-			
+										
+		
 			
 		// holders
 		this.add( new Holder(  0, -1, material ) );

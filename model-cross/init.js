@@ -48,7 +48,6 @@ var light = new THREE.SpotLight( 'white', 1.3 );
 
 	scene.add( light );
 
-
 // additional light without shadow
 
 var subLight = new THREE.SpotLight( 'white', 0.3 );
