@@ -24,7 +24,6 @@ var scene = new THREE.Scene();
 
 var camera = new THREE.PerspectiveCamera( 60, 1, 1, 1000 );
 	camera.position.set( 30, 60, 60 );
-	//camera.position.set( 0, 100, 0 );
 	camera.lookAt( scene.position );
 
 
@@ -74,7 +73,7 @@ var subLight = new THREE.SpotLight( 'white', 0.3 );
 //			}; // added by P. Boytchev
 
 var controls = new THREE.OrbitControls( camera, renderer.domElement );
-	controls.maxPolarAngle = Math.PI * 0.45;
+	controls.maxPolarAngle = Math.PI * 0.45*1.2;
 	controls.minDistance = 20;
 	controls.maxDistance = 200;
 	controls.enableDamping = !true;
@@ -82,7 +81,7 @@ var controls = new THREE.OrbitControls( camera, renderer.domElement );
 	controls.rotateSpeed = 0.3;
 	controls.panSpeed = 0.7;
 	controls.screenSpacePanning = false;
-	controls.target.set( 0, 0, 0 );
+	controls.target.set( 0, 10, 0 );
 	controls.update();
 	
 // manage window rezie or smartphone rotation
