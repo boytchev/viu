@@ -200,10 +200,14 @@ class Frame extends THREE.Group
 		this.add( new Holder(  0, -1, material ) );
 		this.add( new Holder(  1, -1, material ) );
 		this.add( new Holder( -1, -1, material ) );
+		this.add( new Holder(  2, -1, material ) );
+		this.add( new Holder( -2, -1, material ) );
 
 		this.add( new Holder(  0, +1, material ) );
 		this.add( new Holder(  1, +1, material ) );
 		this.add( new Holder( -1, +1, material ) );
+		this.add( new Holder(  2, +1, material ) );
+		this.add( new Holder( -2, +1, material ) );
 
 		
 		// "Viu"

@@ -105,4 +105,4 @@ function animate( time )
 	renderer.render( scene, camera );
 }
 
-export {scene, camera, controls, MAX_ANISOTROPY};
+export {scene, camera, controls, MAX_ANISOTROPY, renderer};

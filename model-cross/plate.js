@@ -5,6 +5,7 @@ import {PLATE_INDENT, HOLDER_DISTANCE, PLATE_WIDTH, PLATE_SIZE, FRAME_HEIGHT} fr
 import {MAX_ANISOTROPY, scene} from './init.js';
 import {BufferGeometryUtils} from '../js/BufferGeometryUtils.js';
 import {Braille} from './braille.js';
+import {glassObject} from './glassobject.js';
 
 
 export var texture = new THREE.TextureLoader().load( '../textures/marble.jpg' );
@@ -21,15 +22,15 @@ export var texture2 = new THREE.TextureLoader().load( '../textures/dot-normal.jp
 
 class Plate extends THREE.Group
 {
-	constructor ( holeGeometry )
+	constructor ( x )
 	{
 		super();
 		// STEP 1. START WITH A ROUNDED PLATFORM
 
 		// 1.1: two crossed bars
-		var base = new THREE.BoxGeometry( PLATE_WIDTH, PLATE_SIZE, PLATE_SIZE );
+		var base = new THREE.BoxGeometry( PLATE_WIDTH, PLATE_SIZE, PLATE_SIZE ).translate( x*HOLDER_DISTANCE, 0, 0 );
 
-		var csg = CSG.subtract( [base, holeGeometry] );
+		var csg = CSG.subtract( [base, glassObject.geometry] );
 
 		var	geometry = CSG.BufferGeometry(csg);
 		geometry = BufferGeometryUtils.mergeVertices( geometry, 0.001 );
@@ -82,81 +83,35 @@ class Plate extends THREE.Group
 				vertexColors: true,
 		} );	
 	
-
 									
 		var mesh = new THREE.Mesh( geometry, material );
 			mesh.castShadow = true;
 			mesh.receiveShadow = true;
 			this.add( mesh );
 			
+		this.position.y = PLATE_SIZE/2+FRAME_HEIGHT-PLATE_INDENT;
 	}
-
+	
 }
 
-var sphereGeometry = new THREE.SphereGeometry( PLATE_SIZE/3, 32, 64 );
-var coneGeometry = new THREE.CylinderGeometry( PLATE_SIZE/300, PLATE_SIZE/3, 2*PLATE_SIZE/3, 64 ).translate(5,0,0);
-var cubeGeometry = new THREE.BoxGeometry( PLATE_SIZE/3, PLATE_SIZE/3, PLATE_SIZE/3 ).translate(10,0,0).rotateX(Math.PI/4).rotateY(Math.PI/4);
-
-var material = new THREE.MeshPhysicalMaterial({
-				color: 'pink',
-				clearcoat: 0.5,
-				roughness: 0,
-				metalness: 0,
-				map: texture,
-				ior: 1.3,
-				reflectivity: 0.2,
-				thickness: 15,
-				//transmissionMap: texture,
-				transmission: 1,
-				side: THREE.BackSide,
-				sheen: new THREE.Color( 'pink' ),
-});
-var material2 = new THREE.MeshPhysicalMaterial({
-				color: 'crimson',
-				clearcoat: 0.15,
-				roughness: 0,
-				metalness: 0,
-				map: texture,
-				ior: 2.3,
-				reflectivity: 0.2,
-				thickness: 15,
-				envMap: texture2,
-				envMapIntensity: 1,
-				specularIntensity: 1,
-				transmission: 1,
-				side: THREE.FrontSide,
-				opacity: 0.85,
-				transparent: true,
-				sheen: new THREE.Color( 'pink' ),
-});
-var object2 = new THREE.Mesh( coneGeometry, material2 );
-	object2.position.x = -15;
-	object2.position.y = PLATE_SIZE/2+FRAME_HEIGHT-PLATE_INDENT;
-	//object2.castShadow = true;
-	object2.renderOrder = 20;
-	scene.add( object2 );
-var object = new THREE.Mesh( coneGeometry, material );
-	object.position.x = -15;
-	object.position.y = PLATE_SIZE/2+FRAME_HEIGHT-PLATE_INDENT;
-	//object.castShadow = true;
-	object.renderOrder = 11;
-	scene.add( object );
 
 var light = new THREE.SpotLight( 'crimson', 0.3 );
-	light.position.set( object.position.x, 15, 0 );
+	light.position.set( glassObject.position.x, 15, 0 );
 	light.target = new THREE.Object3D();
 	light.angle = Math.PI*0.5;
 	light.penumbra = 1;
 	scene.add( light );
-light.target.position.x = object.position.x;
+
+light.target.position.x = glassObject.position.x;
 scene.add( light.target );	
 	
-var plate = new Plate( coneGeometry );
-	plate.position.y = PLATE_SIZE/2+FRAME_HEIGHT-PLATE_INDENT;
-
-var plate2 = new Plate( coneGeometry );
-	plate2.position.y = PLATE_SIZE/2+FRAME_HEIGHT-PLATE_INDENT;
-	plate2.position.x = -HOLDER_DISTANCE;
-
-scene.add( plate, plate2 );
+var plates = [
+	new Plate( -2 ),
+	new Plate( -1 ),
+	new Plate(  0 ),
+	new Plate(  1 ),
+	new Plate(  2 )
+];
+	
+scene.add( ...plates );
 
