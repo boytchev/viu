@@ -46,6 +46,7 @@ class GlassObject extends THREE.Group
 				emissiveIntensity: 0.2,
 				emissive: 'navy',
 				sheen: new THREE.Color( 'white' ),
+				opacity: 0.85,
 		});
 		
 		var backMaterial = glassMaterial.clone();
@@ -53,13 +54,14 @@ class GlassObject extends THREE.Group
 
 		var frontMaterial = glassMaterial.clone();
 			frontMaterial.side = THREE.FrontSide;
+			frontMaterial.transparent = true;
 
 		var backObject = new THREE.Mesh( this.geometry, backMaterial ),
 			frontObject = new THREE.Mesh( this.geometry, frontMaterial );
 
 		this.position.y = PLATE_SIZE/2+FRAME_HEIGHT-PLATE_INDENT;
 		
-		this.add( backObject, frontObject );
+		this.add( frontObject, backObject );
 		
 	} // GlassObject.constructor
 

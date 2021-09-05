@@ -1,7 +1,6 @@
 ﻿
 // initialize the scene
 
-
 // WebGL renderer + shadows
 
 var renderer = new THREE.WebGLRenderer( {antialias:true} );

@@ -89,9 +89,30 @@ class Plate extends THREE.Group
 			mesh.receiveShadow = true;
 			this.add( mesh );
 			
+		this.isPlate = true;
 		this.position.y = PLATE_SIZE/2+FRAME_HEIGHT-PLATE_INDENT;
-	}
-	
+		this.position.z = -PLATE_SIZE;
+		
+	} // Plate.constructor
+
+	// defines whether given position is available
+	snapToZone( newZ )
+	{
+		this.position.z = newZ;
+
+		// clamp to border
+		this.position.z = THREE.Math.clamp( this.position.z, -PLATE_SIZE, 0 );
+		
+	} // Plate.snapToZone
+
+	snap( )
+	{
+		if( this.position.z < -PLATE_SIZE/2 )
+			this.position.z = -PLATE_SIZE
+		else
+			this.position.z = 0;
+	} // Plate.snap
+
 }
 
 
@@ -105,7 +126,7 @@ var light = new THREE.SpotLight( 'crimson', 0.3 );
 light.target.position.x = glassObject.position.x;
 scene.add( light.target );	
 	
-var plates = [
+export var plates = [
 	new Plate( -2 ),
 	new Plate( -1 ),
 	new Plate(  0 ),

@@ -16,11 +16,139 @@
 		<script type="module">
 
 			import {scene, camera, controls} from './init.js';		// initialize the scene
-			import './config.js';	// configuration of the model
+			import {PLATE_SIZE} from './config.js';	// configuration of the model
 			import {floor} from './floor.js';	// textile floor
 			import './frame.js';
 			import './glassobject.js';
-			import './plate.js';
+			import {plates} from './plate.js';
+
+			var mouse = new THREE.Vector2(), // current mouse or touch position
+				raycaster = new THREE.Raycaster(),
+				dragging = false;
+				
+			var activePlate;
+
+			document.addEventListener('mousedown', onMouseDown);
+			document.addEventListener('mouseup', onMouseUp);
+			document.addEventListener('mousemove', onMouseMove);
+
+			document.addEventListener('touchstart', onMouseDown);
+			document.addEventListener('touchend', onMouseUp);
+			document.addEventListener('touchcancel', onMouseUp);
+			document.addEventListener('touchmove', onMouseMove);
+
+			function pointedPlate()
+			{
+				raycaster.setFromCamera( mouse, camera );
+
+				var intersects = raycaster.intersectObjects( plates, true);
+				if( intersects.length )
+				{
+					var object = intersects[0].object;
+					while( !object.isPlate ) object = object.parent;
+					
+					return object;
+				}
+				else
+					return null;
+			}
+
+			function pointedLocation()
+			{
+				raycaster.setFromCamera( mouse, camera );
+
+				var intersects = raycaster.intersectObject( floor );
+
+				if( intersects.length )
+				{
+					return intersects[0].point;
+				}
+				return null;
+			}
+
+			function onMouseDown(event)
+			{
+				dragging = true;
+				
+				userInput(event);
+				
+				var plate = pointedPlate();
+				if( plate )
+				{
+					controls.enabled = false;
+					activePlate = plate;
+					
+					var pos = pointedLocation();
+					if( pos )
+					{
+						activePlate.dZ = activePlate.position.z - pos.z;
+						activePlate.z = activePlate.position.z;
+					}
+				}
+			}
+
+			function onMouseUp(event)
+			{
+				if( activePlate ) activePlate.snap();
+				controls.resetState();
+				controls.enabled = true;
+				dragging = false;
+			}
+
+
+			function onMouseMove(event)
+			{
+				userInput(event);
+				
+				if( dragging )
+				{
+					// dragging scene or tile
+					if( activePlate )
+					{
+						var pos = pointedLocation();
+						if( pos )
+						{
+							activePlate.snapToZone( pos.z + activePlate.dZ );
+						} // if pos
+					} // if activeTile
+				}
+				else
+				{
+					// moving the cursor
+					userInput(event);
+					
+					var plate = pointedPlate();
+
+					if( plate )
+						activePlate = plate;
+					else
+						if( activePlate ) activePlate = undefined;
+				}
+			}
+
+
+			function userInput(event)
+			{
+				if (event instanceof MouseEvent)
+				{
+					event.preventDefault();
+
+			//		mouseInterface = true;
+			//		mouseButton = event.buttons || 0x1;
+
+					mouse.x = event.clientX / window.innerWidth * 2 - 1;
+					mouse.y = -event.clientY / window.innerHeight * 2 + 1;
+				}
+
+				if (window.TouchEvent && event instanceof TouchEvent && event.touches.length == 1)
+				{
+			//		mouseButton = 0x1;
+
+			//		touchInterface = true;
+					mouse.x = event.touches[0].clientX / window.innerWidth * 2 - 1;
+					mouse.y = -event.touches[0].clientY / window.innerHeight * 2 + 1;
+				}
+			}
 
 		</script>
 		
