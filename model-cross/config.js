@@ -19,6 +19,8 @@ export const HOLDER_WIDTH = 8;
 export const HOLDER_LENGTH = 10;
 export const HOLDER_DISTANCE = 8;
 
-export const GLASS_OBJECT_TYPE = 800;
+export const GLASS_OBJECT_TYPE = 2;
 
 
+//
+// 1	sphere

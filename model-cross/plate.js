@@ -13,13 +13,6 @@ export var texture = new THREE.TextureLoader().load( '../textures/marble.jpg' );
 	texture.wrapT = THREE.RepeatWrapping;
 	texture.anisotropy = MAX_ANISOTROPY;
 
-export var texture2 = new THREE.TextureLoader().load( '../textures/dot-normal.jpg' );
-	texture2.wrapS = THREE.RepeatWrapping;
-	texture2.wrapT = THREE.RepeatWrapping;
-	texture2.repeat = new THREE.Vector2( 10, 10 );
-	texture2.anisotropy = MAX_ANISOTROPY;
-
-
 class Plate extends THREE.Group
 {
 	constructor ( x )
@@ -159,13 +152,12 @@ var light = new THREE.SpotLight( 'crimson', 0.3 );
 light.target.position.x = glassObject.position.x;
 scene.add( light.target );	
 	
-export var plates = [
-	new Plate( -2 ),
-	new Plate( -1 ),
-	new Plate(  0 ),
-	new Plate(  1 ),
-	new Plate(  2 )
-];
+export var plates = [];
+	if( glassObject.pattern & 0b10000 ) plates.push( new Plate( -2 ) );
+	if( glassObject.pattern & 0b01000 ) plates.push( new Plate( -1 ) );
+	if( glassObject.pattern & 0b00100 ) plates.push( new Plate(  0 ) );
+	if( glassObject.pattern & 0b00010 ) plates.push( new Plate( +1 ) );
+	if( glassObject.pattern & 0b00001 ) plates.push( new Plate( +2 ) );
 	
 scene.add( ...plates );
 

@@ -5,6 +5,7 @@ import {PLATE_INDENT, PLATE_SIZE, HOLDER_LENGTH, HOLDER_DISTANCE,HOLDER_HEIGHT,H
 import {MAX_ANISOTROPY, scene} from './init.js';
 import {BufferGeometryUtils} from '../js/BufferGeometryUtils.js';
 import {Braille} from './braille.js';
+import {glassObject} from './glassobject.js';
 
 
 export var texture = new THREE.TextureLoader().load( '../textures/marble.jpg' );
@@ -101,7 +102,7 @@ class Holder extends THREE.Mesh
 
 class Frame extends THREE.Group
 {
-	constructor ()
+	constructor ( pattern = 0b11111 )
 	{
 		super();
 		// STEP 1. START WITH A ROUNDED PLATFORM
@@ -125,13 +126,15 @@ class Frame extends THREE.Group
 		var csg = CSG.union( [base1, base2, corner1, corner2, corner3, corner4] );
 
 
-		var cut1 = new THREE.BoxGeometry( PLATE_WIDTH, PLATE_SIZE, PLATE_SIZE ).translate(0,PLATE_SIZE/2+FRAME_HEIGHT/2-PLATE_INDENT,0),
-			cut2 = new THREE.BoxGeometry( PLATE_WIDTH, PLATE_SIZE, PLATE_SIZE ).translate(HOLDER_DISTANCE,PLATE_SIZE/2+FRAME_HEIGHT/2-PLATE_INDENT,0),
-			cut3 = new THREE.BoxGeometry( PLATE_WIDTH, PLATE_SIZE, PLATE_SIZE ).translate(-HOLDER_DISTANCE,PLATE_SIZE/2+FRAME_HEIGHT/2-PLATE_INDENT,0),
-			cut4 = new THREE.BoxGeometry( PLATE_WIDTH, PLATE_SIZE, PLATE_SIZE ).translate(2*HOLDER_DISTANCE,PLATE_SIZE/2+FRAME_HEIGHT/2-PLATE_INDENT,0),
-			cut5 = new THREE.BoxGeometry( PLATE_WIDTH, PLATE_SIZE, PLATE_SIZE ).translate(-2*HOLDER_DISTANCE,PLATE_SIZE/2+FRAME_HEIGHT/2-PLATE_INDENT,0);
+		var grooves = [csg];
+		
+		if( pattern & 0b10000 ) grooves.push( new THREE.BoxGeometry( PLATE_WIDTH, PLATE_SIZE, PLATE_SIZE ).translate(-2*HOLDER_DISTANCE,PLATE_SIZE/2+FRAME_HEIGHT/2-PLATE_INDENT,0) );
+		if( pattern & 0b01000 ) grooves.push( new THREE.BoxGeometry( PLATE_WIDTH, PLATE_SIZE, PLATE_SIZE ).translate(-HOLDER_DISTANCE,PLATE_SIZE/2+FRAME_HEIGHT/2-PLATE_INDENT,0) );
+		if( pattern & 0b00100 ) grooves.push( new THREE.BoxGeometry( PLATE_WIDTH, PLATE_SIZE, PLATE_SIZE ).translate(0,PLATE_SIZE/2+FRAME_HEIGHT/2-PLATE_INDENT,0) );
+		if( pattern & 0b00010 ) grooves.push( new THREE.BoxGeometry( PLATE_WIDTH, PLATE_SIZE, PLATE_SIZE ).translate(HOLDER_DISTANCE,PLATE_SIZE/2+FRAME_HEIGHT/2-PLATE_INDENT,0) );
+		if( pattern & 0b00001 ) grooves.push( new THREE.BoxGeometry( PLATE_WIDTH, PLATE_SIZE, PLATE_SIZE ).translate(2*HOLDER_DISTANCE,PLATE_SIZE/2+FRAME_HEIGHT/2-PLATE_INDENT,0) );
 
-		csg = CSG.subtract( [csg, cut1, cut2, cut3, cut4, cut5 ] );
+		csg = CSG.subtract( grooves );
 		
 		// 4. FINALIZATION
 
@@ -199,18 +202,35 @@ class Frame extends THREE.Group
 		
 			
 		// holders
-		this.add( new Holder(  0, -1, material ) );
-		this.add( new Holder(  1, -1, material ) );
-		this.add( new Holder( -1, -1, material ) );
-		this.add( new Holder(  2, -1, material ) );
-		this.add( new Holder( -2, -1, material ) );
-
-		this.add( new Holder(  0, +1, material ) );
-		this.add( new Holder(  1, +1, material ) );
-		this.add( new Holder( -1, +1, material ) );
-		this.add( new Holder(  2, +1, material ) );
-		this.add( new Holder( -2, +1, material ) );
-
+		if( glassObject.pattern & 0b10000 )
+		{
+			this.add( new Holder( -2, -1, material ) );
+			this.add( new Holder( -2, +1, material ) );
+		}
+		
+		if( glassObject.pattern & 0b01000 )
+		{
+			this.add( new Holder( -1, -1, material ) );
+			this.add( new Holder( -1, +1, material ) );
+		}
+		
+		if( glassObject.pattern & 0b00100 )
+		{
+			this.add( new Holder(  0, -1, material ) );
+			this.add( new Holder(  0, +1, material ) );
+		}
+		
+		if( glassObject.pattern & 0b00010 )
+		{
+			this.add( new Holder(  1, -1, material ) );
+			this.add( new Holder(  1, +1, material ) );
+		}
+		
+		if( glassObject.pattern & 0b00001 )
+		{
+			this.add( new Holder(  2, -1, material ) );
+			this.add( new Holder(  2, +1, material ) );
+		}
 		
 		// "Viu"
 		var mapViu = new THREE.TextureLoader().load( '../textures/viu.png' );
@@ -228,7 +248,7 @@ class Frame extends THREE.Group
 
 }
 
-var frame = new Frame();
+var frame = new Frame( glassObject.pattern );
 	frame.position.y = FRAME_HEIGHT/2;
 
 scene.add( frame );
