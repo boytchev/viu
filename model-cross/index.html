@@ -20,7 +20,7 @@
 			import {floor} from './floor.js';	// textile floor
 			import './frame.js';
 			import './glassobject.js';
-			import {plates} from './plate.js';
+			import {plates, sensorPlate} from './plate.js';
 
 			var mouse = new THREE.Vector2(), // current mouse or touch position
 				raycaster = new THREE.Raycaster(),
@@ -53,11 +53,14 @@
 					return null;
 			}
 
-			function pointedLocation()
+			function pointedPlateLocation()
 			{
+				sensorPlate.position.x = activePlate.posX;
+				sensorPlate.updateMatrixWorld( true );
+				
 				raycaster.setFromCamera( mouse, camera );
 
-				var intersects = raycaster.intersectObject( floor );
+				var intersects = raycaster.intersectObject( sensorPlate );
 
 				if( intersects.length )
 				{
@@ -78,7 +81,7 @@
 					controls.enabled = false;
 					activePlate = plate;
 					
-					var pos = pointedLocation();
+					var pos = pointedPlateLocation();
 					if( pos )
 					{
 						activePlate.dZ = activePlate.position.z - pos.z;
@@ -105,7 +108,7 @@
 					// dragging scene or tile
 					if( activePlate )
 					{
-						var pos = pointedLocation();
+						var pos = pointedPlateLocation();
 						if( pos )
 						{
 							activePlate.snapToZone( pos.z + activePlate.dZ );

@@ -31,7 +31,7 @@ var camera = new THREE.PerspectiveCamera( 60, 1, 1, 1000 );
 var light = new THREE.SpotLight( 'white', 1.3 );
 	light.position.set( 80*10, 50*10, 40*10 );
 	light.target = scene;
-	light.angle = Math.PI/3/20;
+	light.angle = Math.PI/3/10;
 	light.penumbra = 1/2;
 	light.castShadow = true;
 	light.shadow.mapSize.width = 2024/8; 
@@ -71,7 +71,7 @@ var subLight = new THREE.SpotLight( 'white', 0.3 );
 //			}; // added by P. Boytchev
 
 var controls = new THREE.OrbitControls( camera, renderer.domElement );
-	controls.maxPolarAngle = Math.PI * 0.45*1.2;
+	controls.maxPolarAngle = Math.PI * 0.45;
 	controls.minDistance = 20;
 	controls.maxDistance = 200;
 	controls.enableDamping = !true;

@@ -24,14 +24,54 @@ class GlassObject extends THREE.Group
 				this.geometry = new THREE.SphereGeometry( PLATE_SIZE/2.5, 50, 100 );
 				break;
 			case 200:
-				this.geometry = new THREE.CylinderGeometry( PLATE_SIZE/300, PLATE_SIZE/2.5, 2*PLATE_SIZE/2.5, 100 );
+				this.geometry = new THREE.CylinderGeometry( PLATE_SIZE/300, PLATE_SIZE/2.5, 1.5*PLATE_SIZE/2.5, 100 );
 				break;
 			case 300:
-				this.geometry = new THREE.BoxGeometry( PLATE_SIZE/3, PLATE_SIZE/3, PLATE_SIZE/3 ).rotateX(Math.PI/4).rotateY(Math.PI/4);
+				this.geometry = new THREE.BoxGeometry( PLATE_SIZE/2, PLATE_SIZE/2, PLATE_SIZE/2 ).rotateX(Math.PI/4).rotateY(Math.PI/4);
+				break;
+			case 400: // brick
+				this.geometry = new THREE.BoxGeometry( PLATE_SIZE/1.5, PLATE_SIZE/3, PLATE_SIZE/5 ).rotateZ(Math.PI/4);
+				break;
+			case 500:
+				this.geometry = new THREE.OctahedronGeometry( PLATE_SIZE/2 );
+				break;
+			case 600:
+				this.geometry = new THREE.TorusGeometry( PLATE_SIZE/3.5, PLATE_SIZE/7.9, 50, 50 ).rotateX(Math.PI/2);
+				break;
+			case 700: // capsule
+				var geometry1 = new THREE.CylinderGeometry( PLATE_SIZE/6, PLATE_SIZE/6, PLATE_SIZE/3, 40 ),
+					geometry2 = new THREE.SphereGeometry( PLATE_SIZE/6, 40, 20 ).translate( 0, PLATE_SIZE/3/2, 0 ),
+					geometry3 = new THREE.SphereGeometry( PLATE_SIZE/6, 40, 20 ).translate( 0, -PLATE_SIZE/3/2, 0 );
+				this.geometry = CSG.BufferGeometry( CSG.union( [geometry1, geometry2, geometry3] )).rotateZ( 0.5*Math.PI/2 );
+				var pos = this.geometry.getAttribute( 'position' );
+				var nor = this.geometry.getAttribute( 'normal' );
+				for( var i=0; i<pos.count; i++ )
+				{
+					var x = pos.getX( i ),
+						y = pos.getY( i ),
+						z = pos.getZ( i );
+					nor.setXYZ( i, x, y, z );
+				}
+				break;
+			case 800: // lens
+				var geometry1 = new THREE.SphereGeometry( PLATE_SIZE/2.4, 40, 20, 0 ).translate(0, PLATE_SIZE/4, 0),
+					geometry2 = new THREE.SphereGeometry( PLATE_SIZE/2.4, 40, 20, 0 ).translate(0, -PLATE_SIZE/4, 0);
+				this.geometry = CSG.BufferGeometry( CSG.intersect( [geometry1, geometry2] )).rotateX( Math.PI/2 );
+				var pos = this.geometry.getAttribute( 'position' );
+				var nor = this.geometry.getAttribute( 'normal' );
+				for( var i=0; i<pos.count; i++ )
+				{
+					var x = pos.getX( i ),
+						y = pos.getY( i ),
+						z = pos.getZ( i );
+					nor.setXYZ( i, x, y, z );
+				}
 				break;
 		} // switch( GLASS_OBJECT_TYPE )
 
-		this.geometry.computeVertexNormals();
+//		this.geometry.computeVertexNormals();
+//console.log(this.geometry.getAttribute('position').count);
+
 		
 		var glassMaterial = new THREE.MeshPhysicalMaterial({
 				color: 'hotpink',
@@ -47,6 +87,9 @@ class GlassObject extends THREE.Group
 				emissive: 'navy',
 				sheen: new THREE.Color( 'white' ),
 				opacity: 0.85,
+				polygonOffset: true,
+				polygonOffsetFactor: 1,
+				polygonOffsetUnits: 1,
 		});
 		
 		var backMaterial = glassMaterial.clone();

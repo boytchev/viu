@@ -11,7 +11,7 @@ var texture = new THREE.TextureLoader().load( '../textures/fabric.jpg' );
 	texture.wrapS = THREE.RepeatWrapping;
 	texture.wrapT = THREE.RepeatWrapping;
 	texture.magFilter = THREE.LinearFilter;
-	texture.repeat.set( 50, 50 );
+	texture.repeat.set( 30, 30 );
 	texture.anisotropy = MAX_ANISOTROPY;
 
 
