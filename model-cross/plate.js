@@ -1,7 +1,7 @@
 ﻿
 // create the static frame of the model
 
-import {IMPORT_PLATES, GLASS_OBJECT_TYPE, EXPORT_PLATES, PLATE_DISTANCE, PLATE_SIZE_IN, PLATE_RADIUS_IN, PLATE_RADIUS, PLATE_INDENT, HOLDER_DISTANCE, PLATE_WIDTH, PLATE_SIZE, FRAME_HEIGHT} from './config.js';
+import {PLATE_ANGLE, IMPORT_PLATES, GLASS_OBJECT_TYPE, EXPORT_PLATES, PLATE_DISTANCE, PLATE_SIZE_IN, PLATE_RADIUS_IN, PLATE_RADIUS, PLATE_INDENT, HOLDER_DISTANCE, PLATE_WIDTH, PLATE_SIZE, FRAME_HEIGHT} from './config.js';
 import {loadGLTF, saveGLTF, MAX_ANISOTROPY, scene} from './init.js';
 import {BufferGeometryUtils} from '../js/BufferGeometryUtils.js';
 import {Braille} from './braille.js';
@@ -127,6 +127,7 @@ class Plate extends THREE.Group
 		this.isPlate = true;
 		this.position.y = PLATE_SIZE/2+FRAME_HEIGHT-PLATE_INDENT;
 		this.position.z = -PLATE_DISTANCE;
+		//this.rotation.x = PLATE_ANGLE/60000;
 
 		if( EXPORT_PLATES )
 			saveGLTF( geometry, `object_${GLASS_OBJECT_TYPE}_${this.posIdx}.glb` )

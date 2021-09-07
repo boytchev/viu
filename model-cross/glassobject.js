@@ -133,12 +133,12 @@ class GlassObject extends THREE.Group
 				break;
 				
 			case 16: // cone
-				patterns = [0b00100, 0b01001, 0b01111];
-				this.geometry = this.coneGeometry().rotateZ( Math.atan2(0.35,0.8) ).translate( -0.05, 4, 0 );
+				this.geometry = this.coneGeometry().rotateZ( a ).translate( -5, 5, 0 );
 				break;
 
 			case 17: // cone
-				this.geometry = this.coneGeometry().rotateZ( a ).translate( -5, 5, 0 );
+				patterns = [0b00100, 0b01001, 0b01111];
+				this.geometry = this.coneGeometry().rotateZ( Math.atan2(0.35,0.8) ).translate( -0.05, 4, 0 );
 				break;
 
 			case 18: // pyramid -----------------------------------------------
