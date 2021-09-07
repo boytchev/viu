@@ -36,7 +36,7 @@ class BufferGeometryUtils {
 
 		const morphTargetsRelative = geometries[ 0 ].morphTargetsRelative;
 
-		const mergedGeometry = new BufferGeometry();
+		const mergedGeometry = new THREE.BufferGeometry();
 
 		let offset = 0;
 
@@ -281,7 +281,7 @@ class BufferGeometryUtils {
 
 		}
 
-		return new BufferAttribute( array, itemSize, normalized );
+		return new THREE.BufferAttribute( array, itemSize, normalized );
 
 	}
 

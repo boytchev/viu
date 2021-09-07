@@ -3,7 +3,7 @@
 
 import {GLASS_OBJECT_TYPE, PLATE_INDENT, PLATE_SIZE, FRAME_HEIGHT} from './config.js';
 import {saveGLTF, MAX_ANISOTROPY, scene, renderer} from './init.js';
-//import {BufferGeometryUtils} from '../js/BufferGeometryUtils.js';
+import {BufferGeometryUtils} from '../js/BufferGeometryUtils.js';
 
 
 
@@ -153,41 +153,35 @@ class GlassObject extends THREE.Group
 			case 20: // capsule -----------------------------------------------
 				patterns = [0b00100, 0b01010, 0b01110];
 				this.geometry = this.capsuleGeometry();
-				this.resetNormals( 0.1 );
+				this.resetNormals( );
 				break;
 				
 			case 21: // capsule
 				this.geometry = this.capsuleGeometry().rotateZ( 2*a );
-				this.resetNormals( 0.1 );
+				this.resetNormals( );
 				break;
 				
 			case 22: // capsule
 				patterns = [0b00100, 0b01010, 0b01110];
-				this.geometry = this.capsuleGeometry().rotateZ( 2*a ).rotateY( 2*a );
-				this.resetNormals( 0.1 );
-				break;
-				
-			case 23: // capsule
-				patterns = [0b00100, 0b01010, 0b01110];
 				this.geometry = this.capsuleGeometry().rotateZ( a );
-				this.resetNormals( 0.1 );
+				this.resetNormals( );
 				break;
 				
-			case 24: // lens --------------------------------------------------
+			case 23: // lens --------------------------------------------------
 				this.geometry = this.lensGeometry();
-				this.resetNormals( 0.1 );
+				this.resetNormals( );
+				break;
+				
+			case 24: // lens
+				patterns = [0b00100, 0b01010, 0b01110];
+				this.geometry = this.lensGeometry().rotateZ( 2*a );
+				this.resetNormals( );
 				break;
 				
 			case 25: // lens
 				patterns = [0b00100, 0b01010, 0b01110];
-				this.geometry = this.lensGeometry().rotateZ( 2*a );
-				this.resetNormals( 0.1 );
-				break;
-				
-			case 26: // lens
-				patterns = [0b00100, 0b01010, 0b01110];
 				this.geometry = this.lensGeometry().rotateZ( a );
-				this.resetNormals( 0.1 );
+				this.resetNormals( );
 				break;
 				
 			default: // same as cube #2
@@ -243,20 +237,22 @@ class GlassObject extends THREE.Group
 	
 	capsuleGeometry()
 	{
-		var geometry1 = new THREE.CylinderGeometry( 0.17*PLATE_SIZE, 0.17*PLATE_SIZE, 0.32*PLATE_SIZE, 40 ),
-			geometry2 = new THREE.SphereGeometry( 0.17*PLATE_SIZE, 40, 30 ).translate( 0, 0.32*PLATE_SIZE/2, 0 ),
-			geometry3 = new THREE.SphereGeometry( 0.17*PLATE_SIZE, 40, 30 ).translate( 0, -0.32*PLATE_SIZE/2, 0 );
+		var geometry1 = new THREE.CylinderGeometry( 0.17*PLATE_SIZE, 0.17*PLATE_SIZE, 0.32*PLATE_SIZE, 80, 1, true ),
+			geometry2 = new THREE.SphereGeometry( 0.17*PLATE_SIZE, 80, 60, 0, 2*Math.PI, 0, Math.PI/2).translate( 0, 0.32*PLATE_SIZE/2, 0 ),
+			geometry3 = new THREE.SphereGeometry( 0.17*PLATE_SIZE, 80, 60, 0,  2*Math.PI, Math.PI/2, Math.PI/2 ).translate( 0, -0.32*PLATE_SIZE/2, 0 );
 			
-		return CSG.BufferGeometry( CSG.union( [geometry1, geometry2, geometry3] ) );
+		return BufferGeometryUtils.mergeBufferGeometries ( [geometry1,geometry2,geometry3], false );
 	}
 
 
 	lensGeometry()
 	{
-		var geometry1 = new THREE.SphereGeometry( PLATE_SIZE/2.4, 40, 20, 0 ).translate(0, PLATE_SIZE/4, 0),
-			geometry2 = new THREE.SphereGeometry( PLATE_SIZE/2.4, 40, 20, 0 ).translate(0, -PLATE_SIZE/4, 0);
+		var alpha = 0.9,
+			radius = 0.35*PLATE_SIZE;
+		var geometry1 = new THREE.SphereGeometry( radius/Math.sin(alpha), 100, 40, 0, 2*Math.PI, 0, alpha ).translate(0, -radius/Math.tan(alpha), 0),
+			geometry2 = new THREE.SphereGeometry( radius/Math.sin(alpha), 100, 40, 0, 2*Math.PI, Math.PI-alpha, alpha ).translate(0, radius/Math.tan(alpha), 0);
 			
-		return CSG.BufferGeometry( CSG.intersect( [geometry1, geometry2] ));
+		return BufferGeometryUtils.mergeBufferGeometries ( [geometry1,geometry2], false );
 	}
 	
 	

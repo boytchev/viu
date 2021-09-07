@@ -180,8 +180,6 @@ class Frame extends THREE.Group
 		geometry.setAttribute( 'color', new THREE.BufferAttribute(new Float32Array(color),3) );
 
 
-		console.log('frame',geometry.getAttribute( 'position' ).count);
-
 		geometry.computeVertexNormals();
 
 
