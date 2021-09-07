@@ -23,5 +23,5 @@ var urlParams = new URLSearchParams( window.location.search );
 
 export const GLASS_OBJECT_TYPE = Math.max(1,Math.min(26,parseInt(urlParams.get('a'))||1)); // [1..26]
 
-export const IMPORT_PLATES = false; // set to true to load GLTF for plates
-export const EXPORT_PLATES = !false; // set to true to generate GLTF and saves them
+export const IMPORT_PLATES = true; // set to true to load GLTF for plates
+export const EXPORT_PLATES = false; // set to true to generate GLTF and saves them

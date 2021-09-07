@@ -219,19 +219,19 @@ class GlassObject extends THREE.Group
 	
 	torusGeometry()
 	{
-		return new THREE.TorusGeometry( 0.28*PLATE_SIZE, 0.12*PLATE_SIZE, 50, 50 );
+		return new THREE.TorusGeometry( 0.28*PLATE_SIZE, 0.1205*PLATE_SIZE, 100, 100 );
 	}
 	
 	
 	cylinderGeometry()
 	{
-		return new THREE.CylinderGeometry( 0.325*PLATE_SIZE, 0.325*PLATE_SIZE, 0.7*PLATE_SIZE, 50 );
+		return new THREE.CylinderGeometry( 0.325*PLATE_SIZE, 0.325*PLATE_SIZE, 0.7*PLATE_SIZE, 100 );
 	}
 	
 	
 	coneGeometry()
 	{
-		return new THREE.CylinderGeometry( 0.01, 0.35*PLATE_SIZE, 0.8*PLATE_SIZE, 60 );
+		return new THREE.CylinderGeometry( 0.01, 0.35*PLATE_SIZE, 0.8*PLATE_SIZE, 150 );
 	}
 	
 	
