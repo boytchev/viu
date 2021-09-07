@@ -19,6 +19,7 @@ const MAX_ANISOTROPY = renderer.capabilities.getMaxAnisotropy();
 
 var scene = new THREE.Scene();
 	scene.background = new THREE.Color(0.05,0.055,0.1);
+	scene.position.y = -10;
 
 
 // perspective camera
@@ -73,7 +74,7 @@ var subLight = new THREE.SpotLight( 'white', 0.3 );
 //			}; // added by P. Boytchev
 
 var controls = new THREE.OrbitControls( camera, renderer.domElement );
-	controls.maxPolarAngle = Math.PI * 0.45;
+	controls.maxPolarAngle = Math.PI * 0.5;
 	controls.minDistance = 20;
 	controls.maxDistance = 200;
 	controls.enableDamping = !true;
