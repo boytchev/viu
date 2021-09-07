@@ -84,101 +84,105 @@ class GlassObject extends THREE.Group
 				this.geometry = this.cubeGeometry().rotateY( a );
 				break;
 
+			case 5: // cube
+				this.geometry = this.cubeGeometry().rotateX( a ).rotateY( a ).rotateX( -2*a );
+				break;
+
 			case 5: // brick --------------------------------------------------
  				this.geometry = this.brickGeometry();
 				break;
 
-			case 6: // brick
+			case 7: // brick
 				this.geometry = this.brickGeometry().rotateY( a );
 				break;
 
-			case 7: // torus --------------------------------------------------
+			case 8: // torus --------------------------------------------------
 				this.geometry = this.torusGeometry();
 				break;
 
-			case 8: // torus
+			case 9: // torus
 				patterns = [0b00100, 0b01110];
 				this.geometry = this.torusGeometry().rotateY( 2*a );
 				break;
 
-			case 9: // torus
+			case 10: // torus
 				patterns = [0b00100, 0b01010, 0b01110];
 				this.geometry = this.torusGeometry().rotateY( a );
 				break;
 
-			case 10: // cyl ---------------------------------------------------
+			case 11: // cyl ---------------------------------------------------
 				this.geometry = this.cylinderGeometry();
 				break;
 
-			case 11: // cyl
+			case 12: // cyl
 				this.geometry = this.cylinderGeometry().rotateZ( 2*a );
 				break;
 
-			case 12: // cyl
+			case 13: // cyl
 				this.geometry = this.geometry = this.cylinderGeometry().rotateZ( a );
 				break;
 
-			case 13: // cone --------------------------------------------------
+			case 14: // cone --------------------------------------------------
 				this.geometry = this.coneGeometry();
 				this.resetNormals();
 				break;
 
-			case 14: // cone
+			case 15: // cone
 				this.geometry = this.coneGeometry().rotateZ( 2*a );
 				this.resetNormals();
 				break;
 				
-			case 15: // cone
+			case 16: // cone
 				patterns = [0b00100, 0b01001, 0b01111];
 				this.geometry = this.coneGeometry().rotateZ( Math.atan2(0.35,0.8) ).translate( -0.05, 4, 0 );
 				break;
 
-			case 16: // cone
+			case 17: // cone
 				this.geometry = this.coneGeometry().rotateZ( a ).translate( -5, 5, 0 );
 				break;
 
-			case 17: // pyramid -----------------------------------------------
+			case 18: // pyramid -----------------------------------------------
 				this.geometry = this.pyramidGeometry().rotateY( a );
 				break;
 				
-			case 18: // pyramid
+			case 19: // pyramid
 				this.geometry = this.pyramidGeometry();
 				break;
 				
-			case 19: // pyramid
+			case 20: // pyramid
 				patterns = [0b00100, 0b01010, 0b01111];
 				this.geometry = this.pyramidGeometry().rotateY( a ).rotateZ( a );
 				break;
 				
-			case 20: // capsule -----------------------------------------------
+			case 21: // capsule -----------------------------------------------
 				patterns = [0b00100, 0b01010, 0b01110];
 				this.geometry = this.capsuleGeometry();
 				this.resetNormals( );
 				break;
 				
-			case 21: // capsule
+			case 22: // capsule
 				this.geometry = this.capsuleGeometry().rotateZ( 2*a );
 				this.resetNormals( );
 				break;
 				
-			case 22: // capsule
+			case 23: // capsule
 				patterns = [0b00100, 0b01010, 0b01110];
 				this.geometry = this.capsuleGeometry().rotateZ( a );
 				this.resetNormals( );
 				break;
 				
-			case 23: // lens --------------------------------------------------
+			case 24: // lens --------------------------------------------------
 				this.geometry = this.lensGeometry();
 				this.resetNormals( );
 				break;
 				
-			case 24: // lens
+			case 25: // lens
 				patterns = [0b00100, 0b01010, 0b01110];
 				this.geometry = this.lensGeometry().rotateZ( 2*a );
 				this.resetNormals( );
 				break;
 				
-			case 25: // lens
+			case 26: // lens
 				patterns = [0b00100, 0b01010, 0b01110];
 				this.geometry = this.lensGeometry().rotateZ( a );
 				this.resetNormals( );
