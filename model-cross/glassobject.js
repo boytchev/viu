@@ -88,7 +88,7 @@ class GlassObject extends THREE.Group
 				this.geometry = this.cubeGeometry().rotateX( a ).rotateY( a ).rotateX( -2*a );
 				break;
 
-			case 5: // brick --------------------------------------------------
+			case 6: // brick --------------------------------------------------
  				this.geometry = this.brickGeometry();
 				break;
 

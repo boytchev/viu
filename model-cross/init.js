@@ -1,9 +1,8 @@
 ﻿
 // initialize the scene
 
-// WebGL renderer + shadows
 
-export var clock = new THREE.Clock();
+// WebGL renderer + shadows
 
 var renderer = new THREE.WebGLRenderer( {antialias:true} );
 	renderer.setAnimationLoop( animate );
