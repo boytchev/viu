@@ -1,7 +1,7 @@
 ﻿
 // create the static frame of the model
 
-import {GLASS_OBJECT_TYPE, PLATE_INDENT, PLATE_SIZE, FRAME_HEIGHT} from './config.js';
+import {PLATE_ANGLE, GLASS_OBJECT_TYPE, PLATE_INDENT, PLATE_SIZE, FRAME_HEIGHT} from './config.js';
 import {saveGLTF, MAX_ANISOTROPY, scene, renderer} from './init.js';
 import {BufferGeometryUtils} from '../js/BufferGeometryUtils.js';
 
@@ -55,6 +55,8 @@ class GlassObject extends THREE.Group
 		this.position.y = PLATE_SIZE/2+FRAME_HEIGHT-PLATE_INDENT;
 		
 		this.add( frontObject, backObject );
+		this.rotation.x = PLATE_ANGLE;
+
 	} // GlassObject.constructor
 
 

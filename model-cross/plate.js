@@ -127,7 +127,7 @@ class Plate extends THREE.Group
 		this.isPlate = true;
 		this.position.y = PLATE_SIZE/2+FRAME_HEIGHT-PLATE_INDENT;
 		this.position.z = -PLATE_DISTANCE;
-		//this.rotation.x = PLATE_ANGLE/60000;
+		this.rotation.x = PLATE_ANGLE;
 
 		if( EXPORT_PLATES )
 			saveGLTF( geometry, `object_${GLASS_OBJECT_TYPE}_${this.posIdx}.glb` )
