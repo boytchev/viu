@@ -133,12 +133,22 @@ const exporter = new THREE.GLTFExporter();
 
 function saveGLTF( geometry, filename )
 {
-	var obj = new THREE.Mesh( this.geometry );
+	var obj = new THREE.Mesh( geometry );
 	
 	exporter.parse( obj, function ( gltf ) {
 		//saveArrayBuffer( gltf, 'sphere.glb' );
-		saveString( JSON.stringify( gltf, null, 2 ), `object_${GLASS_OBJECT_TYPE}.gltf` );
+		saveString( JSON.stringify( gltf, null, 2 ), filename );
 	}, {binary: false} );
 }
 
-export {scene, camera, controls, MAX_ANISOTROPY, renderer, saveGLTF};
+function loadGLTF( filename, object )
+{
+	new THREE.GLTFLoader().load( filename, objectLoaded );
+		
+	function objectLoaded( gltf )
+	{
+		object.geometry = gltf.scene.children[0].geometry;
+	}
+}
+
+export {scene, camera, controls, MAX_ANISOTROPY, renderer, saveGLTF, loadGLTF};

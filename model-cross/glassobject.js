@@ -2,7 +2,7 @@
 // create the static frame of the model
 
 import {GLASS_OBJECT_TYPE, PLATE_INDENT, PLATE_SIZE, FRAME_HEIGHT} from './config.js';
-import {MAX_ANISOTROPY, scene, renderer} from './init.js';
+import {saveGLTF, MAX_ANISOTROPY, scene, renderer} from './init.js';
 //import {BufferGeometryUtils} from '../js/BufferGeometryUtils.js';
 
 
@@ -201,7 +201,7 @@ class GlassObject extends THREE.Group
 	
 	sphereGeometry()
 	{
-		return new THREE.SphereGeometry( 0.325*PLATE_SIZE, 50, 20 ).rotateZ( Math.PI/2 );
+		return new THREE.SphereGeometry( 0.325*PLATE_SIZE, 100, 50 ).rotateZ( Math.PI/2 );
 	}
 	
 	
@@ -280,11 +280,11 @@ class GlassObject extends THREE.Group
 		}
 	}
 
-	static saveObjects()
+	saveAllGLTF()
 	{
-		for( var objectType=1; objectType<=26; objectType++ )
+		for( var objectType=20; objectType<=26; objectType++ )
 		{
-			this.generateObject( objectType );
+			this.generateGeometry( objectType );
 			saveGLTF( this.geometry, `object_${objectType}.glb` );
 		}
 	}
@@ -293,5 +293,9 @@ class GlassObject extends THREE.Group
 
 
 export var glassObject = new GlassObject();
-//glassObject.rotation.set( Math.PI/4*THREE.Math.randInt(0,8), Math.PI/4*THREE.Math.randInt(0,8), Math.PI/4*THREE.Math.randInt(0,8) );
+
+
+// generate gass objects as GLTF binary files
+//glassObject.saveAllGLTF();
+
 scene.add( glassObject );

@@ -1,8 +1,8 @@
 ﻿
 // create the static frame of the model
 
-import {PLATE_DISTANCE, PLATE_SIZE_IN, PLATE_RADIUS_IN, PLATE_RADIUS, PLATE_INDENT, HOLDER_DISTANCE, PLATE_WIDTH, PLATE_SIZE, FRAME_HEIGHT} from './config.js';
-import {MAX_ANISOTROPY, scene} from './init.js';
+import {IMPORT_PLATES, GLASS_OBJECT_TYPE, EXPORT_PLATES, PLATE_DISTANCE, PLATE_SIZE_IN, PLATE_RADIUS_IN, PLATE_RADIUS, PLATE_INDENT, HOLDER_DISTANCE, PLATE_WIDTH, PLATE_SIZE, FRAME_HEIGHT} from './config.js';
+import {loadGLTF, saveGLTF, MAX_ANISOTROPY, scene} from './init.js';
 import {BufferGeometryUtils} from '../js/BufferGeometryUtils.js';
 import {Braille} from './braille.js';
 import {glassObject} from './glassobject.js';
@@ -20,87 +20,10 @@ class Plate extends THREE.Group
 		super();
 		// STEP 1. START WITH A ROUNDED PLATFORM
 
+		this.posIdx = x+2;
 		this.posX = x*HOLDER_DISTANCE;
-		
-		// 1.1: two crossed bars
-		var base = new THREE.BoxGeometry( PLATE_WIDTH/20, PLATE_SIZE-PLATE_RADIUS_IN/3, PLATE_SIZE-PLATE_RADIUS_IN/3 ).translate( this.posX, 0, 0 );
 
-		var N = PLATE_SIZE/2,
-			R = PLATE_RADIUS;
-		const shape = new THREE.Shape();
-			shape.moveTo( 0, -N );
-			shape.lineTo( N-R, -N );
-			shape.quadraticCurveTo( N, -N, N, -N+R );
-			shape.lineTo( N, N-R );
-			shape.quadraticCurveTo( N, N, N-R, N );
-			shape.lineTo( -N+R, N );
-			shape.quadraticCurveTo( -N, N, -N, N-R );
-			shape.lineTo( -N, -N+R );
-			shape.quadraticCurveTo( -N, -N, -N+R, -N );
-			shape.lineTo( 0, -N );
-		var N = PLATE_SIZE_IN/2,
-			R = PLATE_RADIUS_IN;
-		const hole = new THREE.Shape();
-			hole.moveTo( 0, -N );
-			hole.lineTo( N-R, -N );
-			hole.quadraticCurveTo( N, -N, N, -N+R );
-			hole.lineTo( N, N-R );
-			hole.quadraticCurveTo( N, N, N-R, N );
-			hole.lineTo( -N+R, N );
-			hole.quadraticCurveTo( -N, N, -N, N-R );
-			hole.lineTo( -N, -N+R );
-			hole.quadraticCurveTo( -N, -N, -N+R, -N );
-			hole.lineTo( 0, -N );
-		shape.holes = [hole];
-		var border = new THREE.ExtrudeGeometry( shape, {steps: 30, depth: PLATE_WIDTH, bevelEnabled: false, curveSegments: 32 } ).rotateY( -Math.PI/2 );
-			border.translate( this.posX+PLATE_WIDTH/2, 0, 0 );
-
-		var csg = CSG.union( [base, border] );
-		var csg = CSG.subtract( [csg, glassObject.geometry] );
-
-		var	geometry = CSG.BufferGeometry(csg);
-		geometry = BufferGeometryUtils.mergeVertices( geometry, 0.001 );
-
-		var color = [];
-		var uv = [];
-
-		var pos = geometry.getAttribute( 'position' );
-		var nor = geometry.getAttribute( 'normal' );
-
-		// 4.3: scan all vertices
-						
-		for( var i=0; i<pos.count; i++ )
-		{
-			var x = pos.getX( i ),
-				y = pos.getY( i ),
-				z = pos.getZ( i );
-				
-			var nx = nor.getX( i ),
-				ny = nor.getY( i ),
-				nz = nor.getZ( i );
-
-			// generate vertex colors 
-//			if( Math.abs(nz)>0.1 )
-//				color.push( 0.6,0.5,0.4 );
-//			else
-				color.push( 1, 1, 1 );
-			
-			// generate uv coordinates
-			if( ny>0.5 )
-				uv.push( 0.02*x, 0.02*z );
-			else
-				uv.push( 0.02*(x+z), 0.02*y );
-		}
-
-		// 4.4: set attributes
-
-		geometry.setAttribute( 'uv', new THREE.BufferAttribute(new Float32Array(uv),2) );
-		geometry.setAttribute( 'color', new THREE.BufferAttribute(new Float32Array(color),3) );
-
-
-		geometry.computeVertexNormals();
-
-
+		var geometry = new THREE.BufferGeometry();
 		var material = new THREE.MeshStandardMaterial( {
 				color: 'white',
 				roughness: 0.7,
@@ -115,10 +38,98 @@ class Plate extends THREE.Group
 			mesh.receiveShadow = true;
 			this.add( mesh );
 			
+		if( IMPORT_PLATES )
+		{
+			loadGLTF( `objects/object_${GLASS_OBJECT_TYPE}_${this.posIdx}.glb`, mesh );
+		}
+		else
+		{
+			// 1.1: two crossed bars
+			var base = new THREE.BoxGeometry( PLATE_WIDTH/20, PLATE_SIZE-PLATE_RADIUS_IN/3, PLATE_SIZE-PLATE_RADIUS_IN/3 ).translate( this.posX, 0, 0 );
+
+			var N = PLATE_SIZE/2,
+				R = PLATE_RADIUS;
+			const shape = new THREE.Shape();
+				shape.moveTo( 0, -N );
+				shape.lineTo( N-R, -N );
+				shape.quadraticCurveTo( N, -N, N, -N+R );
+				shape.lineTo( N, N-R );
+				shape.quadraticCurveTo( N, N, N-R, N );
+				shape.lineTo( -N+R, N );
+				shape.quadraticCurveTo( -N, N, -N, N-R );
+				shape.lineTo( -N, -N+R );
+				shape.quadraticCurveTo( -N, -N, -N+R, -N );
+				shape.lineTo( 0, -N );
+			var N = PLATE_SIZE_IN/2,
+				R = PLATE_RADIUS_IN;
+			const hole = new THREE.Shape();
+				hole.moveTo( 0, -N );
+				hole.lineTo( N-R, -N );
+				hole.quadraticCurveTo( N, -N, N, -N+R );
+				hole.lineTo( N, N-R );
+				hole.quadraticCurveTo( N, N, N-R, N );
+				hole.lineTo( -N+R, N );
+				hole.quadraticCurveTo( -N, N, -N, N-R );
+				hole.lineTo( -N, -N+R );
+				hole.quadraticCurveTo( -N, -N, -N+R, -N );
+				hole.lineTo( 0, -N );
+			shape.holes = [hole];
+			var border = new THREE.ExtrudeGeometry( shape, {steps: 1, depth: PLATE_WIDTH, bevelEnabled: false, curveSegments: 32 } ).rotateY( -Math.PI/2 );
+				border.translate( this.posX+PLATE_WIDTH/2, 0, 0 );
+
+			var csg = CSG.union( [base, border] );
+			var csg = CSG.subtract( [csg, glassObject.geometry] );
+
+			var	geometry = CSG.BufferGeometry(csg);
+			geometry = BufferGeometryUtils.mergeVertices( geometry, 0.001 );
+
+			var color = [];
+			var uv = [];
+
+			var pos = geometry.getAttribute( 'position' );
+			var nor = geometry.getAttribute( 'normal' );
+
+			// 4.3: scan all vertices
+							
+			for( var i=0; i<pos.count; i++ )
+			{
+				var x = pos.getX( i ),
+					y = pos.getY( i ),
+					z = pos.getZ( i );
+					
+				var nx = nor.getX( i ),
+					ny = nor.getY( i ),
+					nz = nor.getZ( i );
+
+				// generate vertex colors 
+	//			if( Math.abs(nz)>0.1 )
+	//				color.push( 0.6,0.5,0.4 );
+	//			else
+					color.push( 1, 1, 1 );
+				
+				// generate uv coordinates
+				if( ny>0.5 )
+					uv.push( 0.02*x, 0.02*z );
+				else
+					uv.push( 0.02*(x+z), 0.02*y );
+			}
+
+			// 4.4: set attributes
+
+			geometry.setAttribute( 'uv', new THREE.BufferAttribute(new Float32Array(uv),2) );
+			geometry.setAttribute( 'color', new THREE.BufferAttribute(new Float32Array(color),3) );
+
+
+			geometry.computeVertexNormals();
+			mesh.geometry = geometry;
+		}
+
 		this.isPlate = true;
 		this.position.y = PLATE_SIZE/2+FRAME_HEIGHT-PLATE_INDENT;
 		this.position.z = -PLATE_DISTANCE;
-		
+
+		if( EXPORT_PLATES )
+			saveGLTF( geometry, `object_${GLASS_OBJECT_TYPE}_${this.posIdx}.glb` )
 	} // Plate.constructor
 
 	// defines whether given position is available
