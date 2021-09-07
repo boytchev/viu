@@ -205,7 +205,7 @@ class Frame extends THREE.Group
 		if( glassObject.pattern & 0b10000 )
 		{
 			this.add( new Holder( -2, -1, material ) );
-			this.add( new Holder( -2, +1, material ) );
+			this.add( new Holder(  2, +1, material ) );
 		}
 		
 		if( glassObject.pattern & 0b01000 )
@@ -229,7 +229,7 @@ class Frame extends THREE.Group
 		if( glassObject.pattern & 0b00001 )
 		{
 			this.add( new Holder(  2, -1, material ) );
-			this.add( new Holder(  2, +1, material ) );
+			this.add( new Holder( -2, +1, material ) );
 		}
 		
 		// "Viu"

@@ -5,7 +5,7 @@
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<script src="../js/three.min.js"></script>
 		<script src="../js/OrbitControls.js"></script>
-		<!--script src="../js/GLTFExporter.js"></script-->
+		<script src="../js/GLTFExporter.js"></script>
 		<link rel="stylesheet" href="../css/viu.css">
 	</head>
 	
@@ -19,8 +19,8 @@
 			import {scene, camera, controls} from './init.js';		// initialize the scene
 			import {PLATE_SIZE} from './config.js';	// configuration of the model
 			import {floor} from './floor.js';	// textile floor
-			import './glassobject.js';
 			import './frame.js';
+			import './glassobject.js';
 			import {plates, sensorPlate} from './plate.js';
 
 			var mouse = new THREE.Vector2(), // current mouse or touch position

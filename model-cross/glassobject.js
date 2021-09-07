@@ -6,38 +6,6 @@ import {MAX_ANISOTROPY, scene, renderer} from './init.js';
 //import {BufferGeometryUtils} from '../js/BufferGeometryUtils.js';
 
 
-/*
-// for GLTF download
-const link = document.createElement( 'a' );
-	link.style.display = 'none';
-	document.body.appendChild( link );
-
-function save( blob, filename )
-{
-	link.href = URL.createObjectURL( blob );
-	link.download = filename;
-	link.click();
-}
-
-function saveString( text, filename )
-{
-	save( new Blob( [ text ], { type: 'text/plain' } ), filename );
-}
-
-function saveArrayBuffer( buffer, filename )
-{
-	save( new Blob( [ buffer ], { type: 'application/octet-stream' } ), filename );
-}
-
-
-const exporter = new THREE.GLTFExporter();
-
-				var obj = new THREE.Mesh( this.geometry );
-				exporter.parse( obj, function ( gltf ) {
-					//saveArrayBuffer( gltf, 'sphere.glb' );;
-					saveString( JSON.stringify( gltf, null, 2 ), 'sphere.gltf' );;
-				}, {binary: !true} );
-*/
 
 export var texture = new THREE.TextureLoader().load( '../textures/marble.jpg' );
 	texture.wrapS = THREE.RepeatWrapping;
@@ -52,140 +20,8 @@ class GlassObject extends THREE.Group
 	{
 		super();
 		
-		var a = Math.PI/4;
-		
 		this.pattern = 0b11111;
-		
-		var patterns = [0b00100, 0b01010, 0b10101, 0b11111];
-
-//		switch( GLASS_OBJECT_TYPE )
-		switch( 6 )
-		{
-			case 1: // sphere
-				this.geometry = this.sphereGeometry();
-				break;
-
-			case 2: // cube
-				patterns = [0b00100, 0b01010, 0b01110];
-				this.geometry = this.cubeGeometry();
-				break;
-
-			case 3: // cube
-				patterns = [0b00100, 0b01010, 0b01110];
-				this.geometry = this.cubeGeometry().rotateX( a );
-				break;
-
-			case 4: // cube
-				this.geometry = this.cubeGeometry().rotateY( a );
-				break;
-
-			case 5: // brick
-				this.geometry = this.brickGeometry();
-				break;
-
-			case 6: // brick
-				this.geometry = this.brickGeometry().rotateY( a );
-				break;
-//==================================================
-			case 7: // torus
-				this.geometry = new THREE.TorusGeometry( 0.28*PLATE_SIZE, 0.12*PLATE_SIZE, 50, 50 );
-				break;
-
-			case 8: // torus
-				this.geometry = new THREE.TorusGeometry( 0.28*PLATE_SIZE, 0.12*PLATE_SIZE, 50, 50 ).rotateY( 2*a );
-				break;
-
-			case 9: // torus
-				this.geometry = new THREE.TorusGeometry( 0.28*PLATE_SIZE, 0.12*PLATE_SIZE, 50, 50 ).rotateY( a );
-				break;
-
-			case 10: // cyl
-				this.geometry = new THREE.CylinderGeometry( 0.325*PLATE_SIZE, 0.325*PLATE_SIZE, 0.7*PLATE_SIZE, 50 );
-				break;
-
-			case 11: // cyl
-				this.geometry = new THREE.CylinderGeometry( 0.325*PLATE_SIZE, 0.325*PLATE_SIZE, 0.7*PLATE_SIZE, 50 ).rotateZ( 2*a );
-				break;
-
-			case 12: // cyl
-				this.geometry = new THREE.CylinderGeometry( 0.325*PLATE_SIZE, 0.325*PLATE_SIZE, 0.7*PLATE_SIZE, 50 ).rotateZ( a );
-				break;
-
-			case 13: // cone
-				this.geometry = new THREE.CylinderGeometry( 0.01, 0.35*PLATE_SIZE, 0.7*PLATE_SIZE, 60 );
-				this.resetNormals();
-				break;
-
-			case 14: // cone
-				this.geometry = new THREE.CylinderGeometry( 0.01, 0.35*PLATE_SIZE, 0.7*PLATE_SIZE, 60 ).rotateZ( 2*a );
-				this.resetNormals();
-				break;
-				
-			case 15: // cone
-				this.geometry = new THREE.CylinderGeometry( 0.01, 0.8*0.4*PLATE_SIZE, 0.8*0.7*PLATE_SIZE, 50 ).rotateZ( Math.atan2( 0.4, 0.7 ) );
-				break;
-
-			case 16: // cone
-				this.geometry = new THREE.CylinderGeometry( 0.01, 0.275*PLATE_SIZE, 0.7*PLATE_SIZE, 50 ).rotateZ( 1.1*a );
-				break;
-
-			case 17: // pyramid
-				this.geometry = new THREE.CylinderGeometry( 0.01, 0.5*PLATE_SIZE, 0.7*PLATE_SIZE, 4 ).rotateY( a );
-				break;
-				
-			case 18: // pyramid
-				this.geometry = new THREE.CylinderGeometry( 0.01, 0.4*PLATE_SIZE, 0.7*PLATE_SIZE, 4 ).rotateY( 0 );
-				break;
-				
-			case 19: // pyramid
-				this.geometry = new THREE.CylinderGeometry( 0.01, 0.4*PLATE_SIZE, 0.7*PLATE_SIZE, 4 ).rotateY( a ).rotateZ( a );
-				break;
-				
-			case 20: // capsule
-				this.geometry = this.capsuleGeometry();
-				this.resetNormals( 0.1 );
-				break;
-				
-			case 21: // capsule
-				this.geometry = this.capsuleGeometry().rotateZ( 2*a );
-				this.resetNormals( 0.1 );
-				break;
-				
-			case 22: // capsule
-				this.geometry = this.capsuleGeometry().rotateZ( 2*a ).rotateY( 2*a );
-				this.resetNormals( 0.1 );
-				break;
-				
-			case 23: // capsule
-				this.geometry = this.capsuleGeometry().rotateZ( a );
-				this.resetNormals( 0.1 );
-				break;
-				
-			case 24: // lens
-				this.geometry = this.lensGeometry();
-				this.resetNormals( 0.1 );
-				break;
-				
-			case 25: // lens
-				this.geometry = this.lensGeometry().rotateZ( 2*a );
-				this.resetNormals( 0.1 );
-				break;
-				
-			case 26: // lens
-				this.geometry = this.lensGeometry().rotateZ( a );
-				this.resetNormals( 0.1 );
-				break;
-				
-			default: // same as cube #2
-				this.geometry = new THREE.BoxGeometry( 0.5*PLATE_SIZE, 0.5*PLATE_SIZE, 0.5*PLATE_SIZE );
-				break;
-		} // switch( GLASS_OBJECT_TYPE )
-
-		this.pattern = patterns[ patterns.length-1 ];
-		
-//		this.geometry.computeVertexNormals();
-//console.log(this.geometry.getAttribute('position').count);
-
+		this.generateGeometry( GLASS_OBJECT_TYPE );
 		
 		var glassMaterial = new THREE.MeshPhysicalMaterial({
 				color: 'hotpink',
@@ -219,13 +55,153 @@ class GlassObject extends THREE.Group
 		this.position.y = PLATE_SIZE/2+FRAME_HEIGHT-PLATE_INDENT;
 		
 		this.add( frontObject, backObject );
-		
 	} // GlassObject.constructor
 
 
+	generateGeometry( objectType )
+	{
+		var a = Math.PI/4;
+		
+		var patterns = [0b00100, 0b01010, 0b10101, 0b11111];
+
+		switch( objectType )
+		{
+			case 1: // sphere -------------------------------------------------
+				this.geometry = this.sphereGeometry();
+				break;
+
+			case 2: // cube ---------------------------------------------------
+				patterns = [0b00100, 0b01010, 0b01110];
+				this.geometry = this.cubeGeometry();
+				break;
+
+			case 3: // cube
+				patterns = [0b00100, 0b01010, 0b01110];
+				this.geometry = this.cubeGeometry().rotateX( a );
+				break;
+
+			case 4: // cube
+				this.geometry = this.cubeGeometry().rotateY( a );
+				break;
+
+			case 5: // brick --------------------------------------------------
+ 				this.geometry = this.brickGeometry();
+				break;
+
+			case 6: // brick
+				this.geometry = this.brickGeometry().rotateY( a );
+				break;
+
+			case 7: // torus --------------------------------------------------
+				this.geometry = this.torusGeometry();
+				break;
+
+			case 8: // torus
+				patterns = [0b00100, 0b01110];
+				this.geometry = this.torusGeometry().rotateY( 2*a );
+				break;
+
+			case 9: // torus
+				patterns = [0b00100, 0b01010, 0b01110];
+				this.geometry = this.torusGeometry().rotateY( a );
+				break;
+
+			case 10: // cyl ---------------------------------------------------
+				this.geometry = this.cylinderGeometry();
+				break;
+
+			case 11: // cyl
+				this.geometry = this.cylinderGeometry().rotateZ( 2*a );
+				break;
+
+			case 12: // cyl
+				this.geometry = this.geometry = this.cylinderGeometry().rotateZ( a );
+				break;
+
+			case 13: // cone --------------------------------------------------
+				this.geometry = this.coneGeometry();
+				this.resetNormals();
+				break;
+
+			case 14: // cone
+				this.geometry = this.coneGeometry().rotateZ( 2*a );
+				this.resetNormals();
+				break;
+				
+			case 15: // cone
+				patterns = [0b00100, 0b01001, 0b01111];
+				this.geometry = this.coneGeometry().rotateZ( Math.atan2(0.35,0.8) ).translate( -0.05, 4, 0 );
+				break;
+
+			case 16: // cone
+				this.geometry = this.coneGeometry().rotateZ( a ).translate( -5, 5, 0 );
+				break;
+
+			case 17: // pyramid -----------------------------------------------
+				this.geometry = this.pyramidGeometry().rotateY( a );
+				break;
+				
+			case 18: // pyramid
+				this.geometry = this.pyramidGeometry();
+				break;
+				
+			case 19: // pyramid
+				patterns = [0b00100, 0b01010, 0b01111];
+				this.geometry = this.pyramidGeometry().rotateY( a ).rotateZ( a );
+				break;
+				
+			case 20: // capsule -----------------------------------------------
+				patterns = [0b00100, 0b01010, 0b01110];
+				this.geometry = this.capsuleGeometry();
+				this.resetNormals( 0.1 );
+				break;
+				
+			case 21: // capsule
+				this.geometry = this.capsuleGeometry().rotateZ( 2*a );
+				this.resetNormals( 0.1 );
+				break;
+				
+			case 22: // capsule
+				patterns = [0b00100, 0b01010, 0b01110];
+				this.geometry = this.capsuleGeometry().rotateZ( 2*a ).rotateY( 2*a );
+				this.resetNormals( 0.1 );
+				break;
+				
+			case 23: // capsule
+				patterns = [0b00100, 0b01010, 0b01110];
+				this.geometry = this.capsuleGeometry().rotateZ( a );
+				this.resetNormals( 0.1 );
+				break;
+				
+			case 24: // lens --------------------------------------------------
+				this.geometry = this.lensGeometry();
+				this.resetNormals( 0.1 );
+				break;
+				
+			case 25: // lens
+				patterns = [0b00100, 0b01010, 0b01110];
+				this.geometry = this.lensGeometry().rotateZ( 2*a );
+				this.resetNormals( 0.1 );
+				break;
+				
+			case 26: // lens
+				patterns = [0b00100, 0b01010, 0b01110];
+				this.geometry = this.lensGeometry().rotateZ( a );
+				this.resetNormals( 0.1 );
+				break;
+				
+			default: // same as cube #2
+				this.geometry = this.sphereGeometry();
+				break;
+		} // switch( GLASS_OBJECT_TYPE )
+
+		this.pattern = patterns[ patterns.length-1 ];
+	}
+	
+	
 	sphereGeometry()
 	{
-		return new THREE.SphereGeometry( 0.325*PLATE_SIZE, 50, 20 ).rotateZ( 2*a );
+		return new THREE.SphereGeometry( 0.325*PLATE_SIZE, 50, 20 ).rotateZ( Math.PI/2 );
 	}
 	
 	
@@ -238,6 +214,30 @@ class GlassObject extends THREE.Group
 	brickGeometry()
 	{
 		return new THREE.BoxGeometry( 0.85*PLATE_SIZE, 0.3*PLATE_SIZE, 0.1*PLATE_SIZE );
+	}
+	
+	
+	torusGeometry()
+	{
+		return new THREE.TorusGeometry( 0.28*PLATE_SIZE, 0.12*PLATE_SIZE, 50, 50 );
+	}
+	
+	
+	cylinderGeometry()
+	{
+		return new THREE.CylinderGeometry( 0.325*PLATE_SIZE, 0.325*PLATE_SIZE, 0.7*PLATE_SIZE, 50 );
+	}
+	
+	
+	coneGeometry()
+	{
+		return new THREE.CylinderGeometry( 0.01, 0.35*PLATE_SIZE, 0.8*PLATE_SIZE, 60 );
+	}
+	
+	
+	pyramidGeometry()
+	{
+		return new THREE.CylinderGeometry( 0.01, 0.46*PLATE_SIZE, 0.7*PLATE_SIZE, 4 );
 	}
 	
 	
@@ -277,6 +277,15 @@ class GlassObject extends THREE.Group
 				nz = nor.getZ( i );
 				
 			nor.setXYZ( i, x/d+nx, y/d+ny, z/d+nz );
+		}
+	}
+
+	static saveObjects()
+	{
+		for( var objectType=1; objectType<=26; objectType++ )
+		{
+			this.generateObject( objectType );
+			saveGLTF( this.geometry, `object_${objectType}.glb` );
 		}
 	}
 	

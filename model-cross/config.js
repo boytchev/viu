@@ -15,12 +15,10 @@ export const PLATE_RADIUS_IN = 7;
 export const PLATE_DISTANCE = PLATE_SIZE+4;
 
 export const HOLDER_HEIGHT = 3;
-export const HOLDER_WIDTH = 8;
 export const HOLDER_LENGTH = 10;
-export const HOLDER_DISTANCE = 8;
+export var   HOLDER_WIDTH = 8;
+export var   HOLDER_DISTANCE = 8;
 
-export const GLASS_OBJECT_TYPE = 2;
+var urlParams = new URLSearchParams( window.location.search );
 
-
-//
-// 1	sphere
+export const GLASS_OBJECT_TYPE = Math.max(1,Math.min(26,parseInt(urlParams.get('a'))||1)); // [1..26]

@@ -3,6 +3,8 @@
 
 // WebGL renderer + shadows
 
+export var clock = new THREE.Clock();
+
 var renderer = new THREE.WebGLRenderer( {antialias:true} );
 	renderer.setAnimationLoop( animate );
 	renderer.shadowMap.enabled = true;
@@ -104,4 +106,39 @@ function animate( time )
 	renderer.render( scene, camera );
 }
 
-export {scene, camera, controls, MAX_ANISOTROPY, renderer};
+
+// for GLTF download
+const link = document.createElement( 'a' );
+	link.style.display = 'none';
+	document.body.appendChild( link );
+
+function save( blob, filename )
+{
+	link.href = URL.createObjectURL( blob );
+	link.download = filename;
+	link.click();
+}
+
+function saveString( text, filename )
+{
+	save( new Blob( [ text ], { type: 'text/plain' } ), filename );
+}
+
+function saveArrayBuffer( buffer, filename )
+{
+	save( new Blob( [ buffer ], { type: 'application/octet-stream' } ), filename );
+}
+
+const exporter = new THREE.GLTFExporter();
+
+function saveGLTF( geometry, filename )
+{
+	var obj = new THREE.Mesh( this.geometry );
+	
+	exporter.parse( obj, function ( gltf ) {
+		//saveArrayBuffer( gltf, 'sphere.glb' );
+		saveString( JSON.stringify( gltf, null, 2 ), `object_${GLASS_OBJECT_TYPE}.gltf` );
+	}, {binary: false} );
+}
+
+export {scene, camera, controls, MAX_ANISOTROPY, renderer, saveGLTF};
