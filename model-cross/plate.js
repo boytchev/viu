@@ -5,7 +5,7 @@ import {PLATE_ANGLE, IMPORT_PLATES, GLASS_OBJECT_TYPE, EXPORT_PLATES, PLATE_DIST
 import {loadGLTF, saveGLTF, MAX_ANISOTROPY, scene} from './init.js';
 import {BufferGeometryUtils} from '../js/BufferGeometryUtils.js';
 import {Braille} from './braille.js';
-import {glassObject} from './glassobject.js';
+//import {glassObject} from './glassobject.js';
 
 
 export var texture = new THREE.TextureLoader().load( '../textures/marble.jpg' );
@@ -15,7 +15,7 @@ export var texture = new THREE.TextureLoader().load( '../textures/marble.jpg' );
 
 class Plate extends THREE.Group
 {
-	constructor ( x )
+	constructor ( x, glassObject )
 	{
 		super();
 		// STEP 1. START WITH A ROUNDED PLATFORM
@@ -155,23 +155,27 @@ class Plate extends THREE.Group
 
 
 var light = new THREE.SpotLight( 'crimson', 0.3 );
-	light.position.set( glassObject.position.x, 15, 0 );
+	light.position.set( 0/*glassObject.position.x*/, 15, 0 );
 	light.target = new THREE.Object3D();
 	light.angle = Math.PI*0.5;
 	light.penumbra = 1;
 	scene.add( light );
 
-light.target.position.x = glassObject.position.x;
+//light.target.position.x = glassObject.position.x;
 scene.add( light.target );	
 	
 export var plates = [];
-	if( glassObject.pattern & 0b10000 ) plates.push( new Plate( -2 ) );
-	if( glassObject.pattern & 0b01000 ) plates.push( new Plate( -1 ) );
-	if( glassObject.pattern & 0b00100 ) plates.push( new Plate(  0 ) );
-	if( glassObject.pattern & 0b00010 ) plates.push( new Plate( +1 ) );
-	if( glassObject.pattern & 0b00001 ) plates.push( new Plate( +2 ) );
+
+export function createPlates( glassObject )
+{
+	if( glassObject.pattern & 0b10000 ) plates.push( new Plate( -2, glassObject ) );
+	if( glassObject.pattern & 0b01000 ) plates.push( new Plate( -1, glassObject ) );
+	if( glassObject.pattern & 0b00100 ) plates.push( new Plate(  0, glassObject ) );
+	if( glassObject.pattern & 0b00010 ) plates.push( new Plate( +1, glassObject ) );
+	if( glassObject.pattern & 0b00001 ) plates.push( new Plate( +2, glassObject ) );
 	
-scene.add( ...plates );
+	scene.add( ...plates );
+}
 
 export var sensorPlate = new THREE.Mesh(
 		new THREE.PlaneGeometry( 4*PLATE_SIZE, 4*PLATE_SIZE ),

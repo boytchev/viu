@@ -141,13 +141,17 @@ function saveGLTF( geometry, filename )
 	}, {binary: false} );
 }
 
-function loadGLTF( filename, object )
+function loadGLTF( filename, object, done=null )
 {
 	new THREE.GLTFLoader().load( filename, objectLoaded );
 		
 	function objectLoaded( gltf )
 	{
+//scene.add(gltf.scene.children[0]);
+		//console.log('loaded',filename);
+		//console.log(gltf.scene);
 		object.geometry = gltf.scene.children[0].geometry;
+		if( done ) done( object.geometry );
 	}
 }
 

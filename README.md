@@ -80,15 +80,16 @@ There are many objects that can be examined. Here are three examples:
 
 Here are links to all models:
 
-- [Sphere](https://boytchev.github.io/viu/model-cross/index.html?a=1)
 - [Cube №1](https://boytchev.github.io/viu/model-cross/index.html?a=2), [Cube №2](https://boytchev.github.io/viu/model-cross/index.html?a=3), [Cube №3](https://boytchev.github.io/viu/model-cross/index.html?a=4) and [Cube №4](https://boytchev.github.io/viu/model-cross/index.html?a=5)
 - [Brick №1](https://boytchev.github.io/viu/model-cross/index.html?a=6) and [Brick №2](https://boytchev.github.io/viu/model-cross/index.html?a=7)
-- [Torus №1](https://boytchev.github.io/viu/model-cross/index.html?a=8), [Torus №2](https://boytchev.github.io/viu/model-cross/index.html?a=9) and [Torus №3](https://boytchev.github.io/viu/model-cross/index.html?a=10)
+- [Pyramid №1](https://boytchev.github.io/viu/model-cross/index.html?a=18), [Pyramid №2](https://boytchev.github.io/viu/model-cross/index.html?a=19) and [Pyramid №3](https://boytchev.github.io/viu/model-cross/index.html?a=20)
+- [Sphere](https://boytchev.github.io/viu/model-cross/index.html?a=1)
 - [Cylinder №1](https://boytchev.github.io/viu/model-cross/index.html?a=11), [Cylinder №2](https://boytchev.github.io/viu/model-cross/index.html?a=12) and [Cylinder №3](https://boytchev.github.io/viu/model-cross/index.html?a=13)
 - [Cone №1](https://boytchev.github.io/viu/model-cross/index.html?a=14), [Cone №2](https://boytchev.github.io/viu/model-cross/index.html?a=15), [Cone №3](https://boytchev.github.io/viu/model-cross/index.html?a=16) and [Cone №4](https://boytchev.github.io/viu/model-cross/index.html?a=17)
-- [Pyramid №1](https://boytchev.github.io/viu/model-cross/index.html?a=18), [Pyramid №2](https://boytchev.github.io/viu/model-cross/index.html?a=19) and [Pyramid №3](https://boytchev.github.io/viu/model-cross/index.html?a=20)
+- [Torus №1](https://boytchev.github.io/viu/model-cross/index.html?a=8), [Torus №2](https://boytchev.github.io/viu/model-cross/index.html?a=9) and [Torus №3](https://boytchev.github.io/viu/model-cross/index.html?a=10)
 - [Capsule №1](https://boytchev.github.io/viu/model-cross/index.html?a=21), [Capsule №2](https://boytchev.github.io/viu/model-cross/index.html?a=22) and [Capsule №3](https://boytchev.github.io/viu/model-cross/index.html?a=23)
 - [Lens №1](https://boytchev.github.io/viu/model-cross/index.html?a=24), [Lens №2](https://boytchev.github.io/viu/model-cross/index.html?a=25) and [Lens №3](https://boytchev.github.io/viu/model-cross/index.html?a=26)
+- [Head №1](https://boytchev.github.io/viu/model-cross/index.html?a=27), [Head №2](https://boytchev.github.io/viu/model-cross/index.html?a=28) and [Head №3](https://boytchev.github.io/viu/model-cross/index.html?a=29)
 
 
 

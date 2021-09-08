@@ -23,7 +23,7 @@ export const HOLDER_DISTANCE = 8;
 
 var urlParams = new URLSearchParams( window.location.search );
 
-export const GLASS_OBJECT_TYPE = Math.max(1,Math.min(26,parseInt(urlParams.get('a'))||1)); // [1..26]
+export const GLASS_OBJECT_TYPE = Math.max(1,Math.min(29,parseInt(urlParams.get('a'))||1)); // [1..29]
 
 
 //

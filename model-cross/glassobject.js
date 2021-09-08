@@ -2,9 +2,9 @@
 // create the static frame of the model
 
 import {PLATE_ANGLE, GLASS_OBJECT_TYPE, PLATE_INDENT, PLATE_SIZE, FRAME_HEIGHT} from './config.js';
-import {saveGLTF, MAX_ANISOTROPY, scene, renderer} from './init.js';
+import {loadGLTF, saveGLTF, MAX_ANISOTROPY, scene, renderer} from './init.js';
 import {BufferGeometryUtils} from '../js/BufferGeometryUtils.js';
-
+import {createPlates} from './plate.js';
 
 
 export var texture = new THREE.TextureLoader().load( '../textures/marble.jpg' );
@@ -21,8 +21,12 @@ class GlassObject extends THREE.Group
 		super();
 		
 		this.pattern = 0b11111;
-		this.generateGeometry( GLASS_OBJECT_TYPE );
-		
+
+		this.generateGeometry( GLASS_OBJECT_TYPE, this.generatedGeometry );
+	} // GlassObject.constructor
+
+	generatedGeometry( that )
+	{
 		var glassMaterial = new THREE.MeshPhysicalMaterial({
 				color: 'hotpink',
 				clearcoat: 1,
@@ -49,150 +53,194 @@ class GlassObject extends THREE.Group
 			frontMaterial.side = THREE.FrontSide;
 			frontMaterial.transparent = true;
 
-		var backObject = new THREE.Mesh( this.geometry, backMaterial ),
-			frontObject = new THREE.Mesh( this.geometry, frontMaterial );
+		var backObject = new THREE.Mesh( that.geometry, backMaterial ),
+			frontObject = new THREE.Mesh( that.geometry, frontMaterial );
 
-		this.position.y = PLATE_SIZE/2+FRAME_HEIGHT-PLATE_INDENT;
+		that.position.y = PLATE_SIZE/2+FRAME_HEIGHT-PLATE_INDENT;
 		
-		this.add( frontObject, backObject );
-		this.rotation.x = PLATE_ANGLE;
+		that.add( frontObject, backObject );
+		that.rotation.x = PLATE_ANGLE;
+
+		that.pattern = that.patterns[ that.patterns.length-1 ];
 		
 //var geo = this.geometry.clone();
 //geo = geo.rotateX(PLATE_ANGLE).translate(0,PLATE_SIZE/2+FRAME_HEIGHT-PLATE_INDENT,0);
 //const helper = new THREE.VertexNormalsHelper( new THREE.Mesh(geo), 7, 0x00ff00, 1 );
 //scene.add( helper );
-	} // GlassObject.constructor
+
+		createPlates( that );
+	} // GlassObject.generatedGeometry
 
 
-	generateGeometry( objectType )
+	generateGeometry( objectType, generated )
 	{
 		var a = Math.PI/4;
 		
-		var patterns = [0b00100, 0b01010, 0b10101, 0b11111];
+		this.patterns = [0b00100, 0b01010, 0b10101, 0b11111];
 
 		switch( objectType )
 		{
 			case 1: // sphere -------------------------------------------------
 				this.geometry = this.sphereGeometry();
+				generated( this );
 				break;
 
 			case 2: // cube ---------------------------------------------------
-				patterns = [0b00100, 0b01010, 0b01110];
+				this.patterns = [0b00100, 0b01010, 0b01110];
 				this.geometry = this.cubeGeometry();
+				generated( this );
 				break;
 
 			case 3: // cube
-				patterns = [0b00100, 0b01010, 0b01110];
+				this.patterns = [0b00100, 0b01010, 0b01110];
 				this.geometry = this.cubeGeometry().rotateX( a );
+				generated( this );
 				break;
 
 			case 4: // cube
 				this.geometry = this.cubeGeometry().rotateY( a );
+				generated( this );
 				break;
 
 			case 5: // cube
 				this.geometry = this.cubeGeometry().rotateX( a ).rotateY( a ).rotateX( -2*a );
+				generated( this );
 				break;
 
 			case 6: // brick --------------------------------------------------
  				this.geometry = this.brickGeometry();
+				generated( this );
 				break;
 
 			case 7: // brick
 				this.geometry = this.brickGeometry().rotateY( a );
+				generated( this );
 				break;
 
 			case 8: // torus --------------------------------------------------
 				this.geometry = this.torusGeometry();
+				generated( this );
 				break;
 
 			case 9: // torus
-				patterns = [0b00100, 0b01110];
+				this.patterns = [0b00100, 0b01110];
 				this.geometry = this.torusGeometry().rotateY( 2*a );
+				generated( this );
 				break;
 
 			case 10: // torus
-				patterns = [0b00100, 0b01010, 0b01110];
+				this.patterns = [0b00100, 0b01010, 0b01110];
 				this.geometry = this.torusGeometry().rotateY( a );
+				generated( this );
 				break;
 
 			case 11: // cyl ---------------------------------------------------
 				this.geometry = this.cylinderGeometry();
+				generated( this );
 				break;
 
 			case 12: // cyl
 				this.geometry = this.cylinderGeometry().rotateZ( 2*a );
+				generated( this );
 				break;
 
 			case 13: // cyl
 				this.geometry = this.geometry = this.cylinderGeometry().rotateZ( a );
+				generated( this );
 				break;
 
 			case 14: // cone --------------------------------------------------
 				this.geometry = this.coneGeometry();
 				this.resetNormals();
+				generated( this );
 				break;
 
 			case 15: // cone
 				this.geometry = this.coneGeometry().rotateZ( 2*a );
 				this.resetNormals();
+				generated( this );
 				break;
 				
 			case 16: // cone
 				this.geometry = this.coneGeometry().rotateZ( a ).translate( -5, 5, 0 );
+				generated( this );
 				break;
 
 			case 17: // cone
-				patterns = [0b00100, 0b01001, 0b01111];
+				this.patterns = [0b00100, 0b01001, 0b01111];
 				this.geometry = this.coneGeometry().rotateZ( Math.atan2(0.35,0.8) ).translate( -0.05, 4, 0 );
+				generated( this );
 				break;
 
 			case 18: // pyramid -----------------------------------------------
 				this.geometry = this.pyramidGeometry().rotateY( a );
+				generated( this );
 				break;
 				
 			case 19: // pyramid
 				this.geometry = this.pyramidGeometry();
+				generated( this );
 				break;
 				
 			case 20: // pyramid
-				patterns = [0b00100, 0b01010, 0b01111];
+				this.patterns = [0b00100, 0b01010, 0b01111];
 				this.geometry = this.pyramidGeometry().rotateY( a ).rotateZ( a );
+				generated( this );
 				break;
 				
 			case 21: // capsule -----------------------------------------------
-				patterns = [0b00100, 0b01010, 0b01110];
+				this.patterns = [0b00100, 0b01010, 0b01110];
 				this.geometry = this.capsuleGeometry();
 				this.resetNormals( );
+				generated( this );
 				break;
 				
 			case 22: // capsule
 				this.geometry = this.capsuleGeometry().rotateZ( 2*a );
 				this.resetNormals( );
+				generated( this );
 				break;
 				
 			case 23: // capsule
-				patterns = [0b00100, 0b01010, 0b01110];
+				this.patterns = [0b00100, 0b01010, 0b01110];
 				this.geometry = this.capsuleGeometry().rotateZ( a );
 				this.resetNormals( );
+				generated( this );
 				break;
 				
 			case 24: // lens --------------------------------------------------
 				this.geometry = this.lensGeometry();
 				this.resetNormals( );
+				generated( this );
 				break;
 				
 			case 25: // lens
-				patterns = [0b00100, 0b01010, 0b01110];
+				this.patterns = [0b00100, 0b01010, 0b01110];
 				this.geometry = this.lensGeometry().rotateZ( 2*a );
 				this.resetNormals( );
+				generated( this );
 				break;
 				
 			case 26: // lens
-				patterns = [0b00100, 0b01010, 0b01110];
+				this.patterns = [0b00100, 0b01010, 0b01110];
 				this.geometry = this.lensGeometry().rotateZ( a );
 				this.resetNormals( );
+				generated( this );
 				break;
+				
+			case 27: // head --------------------------------------------------
+				this.headGeometry( this, generated, 0, 0 );
+				break;
+				
+			case 28: // head --------------------------------------------------
+				this.patterns = [0b00100, 0b01010, 0b01110];
+				this.headGeometry( this, generated, 2*a, 0 );
+				break;
+				
+			case 29: // head --------------------------------------------------
+				this.headGeometry( this, generated, 0, -2*a );
+				break;
+				
 /*				
 			case 27: // moebius strip --------------------------------------------------
 				this.geometry = this.moebiusGeometry().translate(0,-4,0);
@@ -211,7 +259,6 @@ class GlassObject extends THREE.Group
 				break;
 		} // switch( GLASS_OBJECT_TYPE )
 
-		this.pattern = patterns[ patterns.length-1 ];
 	}
 	
 	
@@ -275,6 +322,24 @@ class GlassObject extends THREE.Group
 			geometry2 = new THREE.SphereGeometry( radius/Math.sin(alpha), 100, 40, 0, 2*Math.PI, Math.PI-alpha, alpha ).translate(0, radius/Math.tan(alpha), 0);
 			
 		return BufferGeometryUtils.mergeBufferGeometries ( [geometry1,geometry2], false );
+	}
+
+
+	headGeometry( mesh, generated, rotY, rotZ )
+	{
+		loadGLTF( `objects/LeePerrySmith.glb`, mesh, function( geometry )
+			{
+				//console.log('done');
+				//console.log( geometry );
+				geometry = geometry.scale( 5, 5, 5 ).rotateY( rotY ).rotateZ( rotZ );
+				//var mesh = new THREE.Mesh( geometry );
+				//createPlates( new THREE.Mesh( mesh.geometry ) );
+				//scene.add( mesh );
+				mesh.geometry = geometry;
+				generated( mesh );
+			}
+		);
+		//return mesh.geometry;
 	}
 
 /*
@@ -386,21 +451,11 @@ class GlassObject extends THREE.Group
 			nor.setXYZ( i, x/d+nx, y/d+ny, z/d+nz );
 		}
 	}
-
-	saveAllGLTF()
-	{
-		for( var objectType=20; objectType<=26; objectType++ )
-		{
-			this.generateGeometry( objectType );
-			saveGLTF( this.geometry, `object_${objectType}.glb` );
-		}
-	}
 	
 } // GlassObject
 
 
 export var glassObject = new GlassObject();
-
 
 // generate gass objects as GLTF binary files
 //glassObject.saveAllGLTF();
