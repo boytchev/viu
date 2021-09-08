@@ -1,10 +1,6 @@
 # Viu
 Virtual design for models for vision impairement users.
 
-Note! Do not look in this repository (so far there is only
-garbage in it). By mid-September 2021 there should some
-3D models ready.
-
 # About
 
 These models are build for the National Scientific Program
@@ -66,12 +62,33 @@ The application can be used to demonstrate or explore:
 - Mathematical foundations of the slide rule.
 
 
-# Papers
+# Cross sections
+
+This is a virtual prototype of a model and collection of
+plates to demonstrate and explore cross sections of various
+solids. The solid is represented as a glassy object, although
+in reality it will be 3D printed too and it will be inserted
+into the plates, instead of just sliding the plates.
+
+[<img src="model-cross/snapshots/snapshot1.jpg">](https://boytchev.github.io/viu/model-cross/index.html?a=1)
+
+There are many objects that can be examined. Here are three examples:
+
+[<img src="model-cross/snapshots/snapshot2.jpg" width="200">](https://boytchev.github.io/viu/model-cross/index.html?a=15)
+[<img src="model-cross/snapshots/snapshot3.jpg" width="200">](https://boytchev.github.io/viu/model-cross/index.html?a=5)
+[<img src="model-cross/snapshots/snapshot4.jpg" width="200">](https://boytchev.github.io/viu/model-cross/index.html?a=13)
+
+Here are links to all models:
+
+- [Sphere](https://boytchev.github.io/viu/model-cross/index.html?a=1)
+- [Cube №1](https://boytchev.github.io/viu/model-cross/index.html?a=2), [Cube №2](https://boytchev.github.io/viu/model-cross/index.html?a=3), [Cube №3](https://boytchev.github.io/viu/model-cross/index.html?a=4) and [Cube №4](https://boytchev.github.io/viu/model-cross/index.html?a=5)
+
+<!---# Papers
 
 The models &ndash; design and applications are discussed in several papers and presented in several conferences:
 
 - "Designing 3D-printer Models for Students with Vision Impairment or Low Vision" (pending review).
 - "Virtual Prototypes of 3D Models for Students with Visual Impairment or Low Vision" (under construction).
-
+--->
 <a href="https://github.com/boytchev/viu">View on GitHub</a>
 

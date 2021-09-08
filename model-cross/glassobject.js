@@ -56,7 +56,11 @@ class GlassObject extends THREE.Group
 		
 		this.add( frontObject, backObject );
 		this.rotation.x = PLATE_ANGLE;
-
+		
+//var geo = this.geometry.clone();
+//geo = geo.rotateX(PLATE_ANGLE).translate(0,PLATE_SIZE/2+FRAME_HEIGHT-PLATE_INDENT,0);
+//const helper = new THREE.VertexNormalsHelper( new THREE.Mesh(geo), 7, 0x00ff00, 1 );
+//scene.add( helper );
 	} // GlassObject.constructor
 
 
@@ -189,7 +193,19 @@ class GlassObject extends THREE.Group
 				this.geometry = this.lensGeometry().rotateZ( a );
 				this.resetNormals( );
 				break;
+/*				
+			case 27: // moebius strip --------------------------------------------------
+				this.geometry = this.moebiusGeometry().translate(0,-4,0);
+				break;
 				
+			case 28: // moebius strip
+				this.geometry = this.moebiusGeometry().rotateY( 2*a ).rotateZ( 2*a ).translate(4,0,0);
+				break;
+				
+			case 29: // moebius strip
+				this.geometry = this.moebiusGeometry().rotateY( -a ).rotateZ( a );
+				break;
+*/				
 			default: // same as cube #2
 				this.geometry = this.sphereGeometry();
 				break;
@@ -260,7 +276,96 @@ class GlassObject extends THREE.Group
 			
 		return BufferGeometryUtils.mergeBufferGeometries ( [geometry1,geometry2], false );
 	}
+
+/*
+	moebiusGeometry()
+	{
 	
+// buffers
+
+		var geometry = new THREE.BufferGeometry();
+		
+		const indices = [];
+		const vertices = [];
+		const normals = [];
+		const uvs = [];
+
+		// helper variables
+
+		const center = new THREE.Vector3();
+		const vertex = new THREE.Vector3();
+		const normal = new THREE.Vector3();
+
+		var radialSegments = 4;
+		var tubularSegments = 400;
+		var arc = Math.PI * 2;
+		var radius = 0.3*PLATE_SIZE;
+		var tube = 0.17*PLATE_SIZE;
+		var ka = 0.07;
+		var arr = [ka,Math.PI-ka,Math.PI+ka,-ka,ka];
+
+		// generate vertices, normals and uvs
+
+		for ( let j = 0; j <= radialSegments; j ++ ) {
+
+			for ( let i = 0; i <= tubularSegments; i ++ ) {
+				var u = i / tubularSegments * arc;
+				var v = arr[j]+1*(u/2 - Math.PI/4);//j / radialSegments * Math.PI * 2;
+
+				// vertex
+
+				vertex.x = ( radius + tube * Math.cos( v ) ) * Math.cos( u );
+				vertex.y = ( radius + tube * Math.cos( v ) ) * Math.sin( u );
+				vertex.z = tube * Math.sin( v );
+
+				vertices.push( vertex.x, vertex.y, vertex.z );
+
+				// normal
+
+				v = u/2+(1+4*( (j>>1)%2 ))*Math.PI/4;
+				normals.push( Math.cos(u)*Math.cos(v), Math.sin(u)*Math.cos(v), Math.sin(v) );
+
+				// uv
+
+				uvs.push( i / tubularSegments );
+				uvs.push( j / radialSegments );
+
+			}
+
+		}
+
+		// generate indices
+
+		for ( let j = 1; j <= radialSegments; j ++ ) {
+
+			for ( let i = 1; i <= tubularSegments; i ++ ) {
+
+				// indices
+
+				const a = ( tubularSegments + 1 ) * j + i - 1;
+				const b = ( tubularSegments + 1 ) * ( j - 1 ) + i - 1;
+				const c = ( tubularSegments + 1 ) * ( j - 1 ) + i;
+				const d = ( tubularSegments + 1 ) * j + i;
+
+				// faces
+
+				indices.push( a, b, d );
+				indices.push( b, c, d );
+
+			}
+
+		}
+
+		// build geometry
+
+		geometry.setIndex( indices );
+		geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+		geometry.setAttribute( 'normal', new THREE.Float32BufferAttribute( normals, 3 ) );
+		geometry.setAttribute( 'uv', new THREE.Float32BufferAttribute( uvs, 2 ) );
+		
+		return geometry;
+	}
+*/	
 	
 	resetNormals( k = 1)
 	{
