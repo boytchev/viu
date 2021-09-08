@@ -89,6 +89,9 @@ Here are links to all models:
 - [Pyramid №1](https://boytchev.github.io/viu/model-cross/index.html?a=18), [Pyramid №2](https://boytchev.github.io/viu/model-cross/index.html?a=19) and [Pyramid №3](https://boytchev.github.io/viu/model-cross/index.html?a=20)
 - [Capsule №1](https://boytchev.github.io/viu/model-cross/index.html?a=21), [Capsule №2](https://boytchev.github.io/viu/model-cross/index.html?a=22) and [Capsule №3](https://boytchev.github.io/viu/model-cross/index.html?a=23)
 - [Lens №1](https://boytchev.github.io/viu/model-cross/index.html?a=24), [Lens №2](https://boytchev.github.io/viu/model-cross/index.html?a=25) and [Lens №3](https://boytchev.github.io/viu/model-cross/index.html?a=26)
+
+
+
 <!---# Papers
 
 The models &ndash; design and applications are discussed in several papers and presented in several conferences:
