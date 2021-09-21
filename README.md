@@ -97,7 +97,7 @@ Here are links to all models:
 
 Academic publications and presentations about these models:
 
-- "Designing 3D-printer Models for Students with Vision Impairment or Low Vision" (accepted for publication and presentation at [International IEEE Conference "Automatics and Informatics 2021" (ICAI'21)](http://www.tu-varna.bg/icai/).
+- "Designing 3D-printer Models for Students with Vision Impairment or Low Vision". Аccepted for publication and presentation at [International IEEE Conference "Automatics and Informatics 2021" (ICAI'21)](http://www.tu-varna.bg/icai/).
 
 
 
