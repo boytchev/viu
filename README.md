@@ -93,12 +93,14 @@ Here are links to all models:
 
 
 
-<!---# Papers
+# Papers
 
-The models &ndash; design and applications are discussed in several papers and presented in several conferences:
+Academic publications and presentations about these models:
 
-- "Designing 3D-printer Models for Students with Vision Impairment or Low Vision" (pending review).
-- "Virtual Prototypes of 3D Models for Students with Visual Impairment or Low Vision" (under construction).
---->
+- "Designing 3D-printer Models for Students with Vision Impairment or Low Vision" (accepted for publication and presentation at [International IEEE Conference "Automatics and Informatics 2021" (ICAI'21)](http://www.tu-varna.bg/icai/).
+
+
+
+# GitHub
 <a href="https://github.com/boytchev/viu">View on GitHub</a>
 
