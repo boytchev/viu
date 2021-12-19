@@ -93,11 +93,17 @@ Here are links to all models:
 
 
 
-# Papers
+# Dissemination
 
 Academic publications and presentations about these models:
 
-- "Designing 3D-printer Models for Students with Vision Impairment or Low Vision". Аccepted for publication and presentation at [International IEEE Conference "Automatics and Informatics 2021" (ICAI'21)](http://www.tu-varna.bg/icai/).
+### Papers
+
+- Boytchev, P., Boytcheva, S. (2021) Designing 3D-printer Models for Students with Vision Impairment or Low Vision, In: [International IEEE Conference "Automatics and Informatics 2021" (ICAI'21)](http://www.tu-varna.bg/icai/), 2021, IEEE, pp. 227-230, Varna, Bulgaria, URL: [https://ieeexplore.ieee.org/document/9639556](https://ieeexplore.ieee.org/document/9639556), DOI: [10.1109/ICAI52893.2021.9639556](https://doi.org/10.1109/ICAI52893.2021.9639556), ISBN 978-1-6654-2661-9
+
+### Presentations
+
+- Designing 3D-printer Models for Students with Vision Impairment or Low Vision, presented at [International IEEE Conference "Automatics and Informatics 2021" (ICAI'21)](http://icai-conf.org/), Track C, session C3 "Software systems for industrial automation", 2021.10.01, Varna, Bulgaria, 2021.09.30-10.01.
 
 
 
