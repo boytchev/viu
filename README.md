@@ -99,7 +99,7 @@ Academic publications and presentations about these models:
 
 ### Papers
 
-- Boytchev, P., Boytcheva, S. (2021) Designing 3D-printer Models for Students with Vision Impairment or Low Vision, In: [International IEEE Conference "Automatics and Informatics 2021" (ICAI'21)](http://icai-conf.org/), 2021, IEEE, pp. 227-230, Varna, Bulgaria, (https://ieeexplore.ieee.org/document/9639556), DOI: [10.1109/ICAI52893.2021.9639556](https://doi.org/10.1109/ICAI52893.2021.9639556), ISBN 978-1-6654-2661-9
+- Boytchev, P., Boytcheva, S. (2021) Designing 3D-printer Models for Students with Vision Impairment or Low Vision, In: [International IEEE Conference "Automatics and Informatics 2021" (ICAI'21)](http://icai-conf.org/), 2021, IEEE, pp. 227-230, Varna, Bulgaria, DOI: [10.1109/ICAI52893.2021.9639556](https://doi.org/10.1109/ICAI52893.2021.9639556), ISBN 978-1-6654-2661-9
 
 ### Presentations
 
